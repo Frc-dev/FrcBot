@@ -8,6 +8,8 @@ This is a bot that recommends maps based on your top plays. You can either:
     python localClient.py
     ```
 
+    Make sure you have all the [requirements to run locally](#-requirements-to-run-locally) set up before starting the bot.
+
 - **Use it in-game** by sending a DM to **Frc** in osu!  
   > _Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM the bot to let me know and I will read it._
 
