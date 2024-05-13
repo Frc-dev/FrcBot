@@ -70,6 +70,8 @@ OSU_IRC_PASSWORD=""
 SONGS_ROOT_DIR=""
 ```
 
+`OSU_CLIENT_ID` and `OSU_CLIENT_SECRET` are needed to interact with the v2 API, you can get the credentials [here, under new OAuth Application](https://osu.ppy.sh/home/account/edit).
+
 `OSU_IRC_USERNAME` and `OSU_IRC_PASSWORD` are only required if you plan to run `ircClient.py` to host your own online bot (totally fine as long as you give credit).
 
 `SONGS_ROOT_DIR` should be the path to your local Songs folder (ideally from osu!stable), which `insertData.py` uses to find `.osu` files for populating the database.
