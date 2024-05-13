@@ -1,3 +1,13 @@
+
+TODO:
+-Improve readme
+-Post full instructions on how to build this locally
+-Fix settings not being saved
+-Improve formatting of mods HD+HR to HDHR for better usability
+-Allow several mods to be banned at once so you don't have to send the command multiple times
+-Host the bot in some server so it runs 24/7
+
+
 This is a bot you can either download the source code and run yourself with python localClient.py or send a DM to Frc in osu! (if you receive no answer my computer is off or I forgot to turn on the bot feel free to send me a DM)
 
 The cool thing is this bot uses the v2 api so it will read your lazer plays and take them into account for recommendation + it will provide lazer pp values
