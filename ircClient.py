@@ -1,7 +1,7 @@
 import irc.client
 import time
 from talkInterfaces import IRCInterface
-from botInteraction import handle_recommendation_command, handle_settings_command
+from botInteraction import handle_recommendation_command
 import os
 from dotenv import load_dotenv
 
@@ -30,8 +30,7 @@ class OsuRecommendationBot:
         if message == "!r":
             handle_recommendation_command(self.interface, sender)
         elif message.startswith("!settings"):
-            args = message.split()[1:]
-            handle_settings_command(self.interface, sender, args)
+            self.interface.send_message(sender, "The !settings command is temporarily disabled while I fix some bugs. Thanks for your patience!")
 
     def run(self):
         while True:
