@@ -9,7 +9,7 @@ This is a bot that recommends maps based on your top plays. You can either:
     ```
 
 - **Use it in-game** by sending a DM to **Frc** in osu!  
-  > _Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM me to let me know._
+  > _Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM the bot to let me know and I will read it._
 
 ---
 
@@ -37,12 +37,73 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ---
 
-## ⚙️ Requirements
+## ⚙️ Requirements to Run Locally
 
-- Python 3.8+
-- Dependencies listed in `requirements.txt`
-- osu! v2 API credentials
+- Python 3.8+ and `sqlite3`
+- A SQLite database
+- The following Python packages:
+  - `rosu-pp-py`
+  - `ossapi`
+  - `requests`
+  - `dotenv`
 
+Install the dependencies with:
+
+```bash
+pip install rosu-pp-py ossapi requests python-dotenv
+```
+## 🛠️ Setup Instructions
+
+Once the source code is downloaded, you'll need to configure a few things before running the bot.
+
+---
+
+### 1. Create a `.env` file
+
+In the root directory, create a file named `.env` with the following content:
+
+```env
+OSU_CLIENT_ID=""
+OSU_CLIENT_SECRET=""
+OSU_IRC_USERNAME=""
+OSU_IRC_PASSWORD=""
+SONGS_ROOT_DIR=""
+```
+
+OSU_IRC_USERNAME and OSU_IRC_PASSWORD are only required if you plan to run `ircClient.py` to host your own online bot (totally fine as long as you give credit).
+
+`SONGS_ROOT_DIR` should be the path to your local Songs folder (ideally from osu!stable), which `insertData.py` uses to find `.osu` files for populating the database.
+
+---
+
+### 2. Populate the Database
+
+From the project root, run:
+
+```bash
+python insertData.py
+```
+
+This will scan the specified Songs directory and populate your SQLite database.
+
+---
+
+### 3. Start the Bot
+
+You can now choose how you want to run the bot:
+
+- To start the **Bancho bot (IRC-based)**:
+
+  ```bash
+  python ircClient.py
+  ```
+
+- To start the **local CLI bot (command line)**:
+
+  ```bash
+  python localClient.py
+  ```
+If anything is unclear or you're stuck, feel free to reach out!
 ---
 
 ## 🧠 Credits
