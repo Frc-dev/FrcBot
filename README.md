@@ -10,7 +10,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
     Make sure you have all the [requirements to run locally](https://github.com/Frc-dev/FrcBot/tree/master?tab=readme-ov-file#%EF%B8%8F-requirements-to-run-locally) set up before starting the bot.
 
-- **Use it in-game** by sending a DM to **Frc** in osu!  
+- **Use it in-game** by sending a DM to [**Frc**](https://osu.ppy.sh/users/4638940) in osu!  
   > _Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM the bot to let me know and I will read it._
 
 ---
