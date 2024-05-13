@@ -1,10 +1,16 @@
 
 TODO:
+
 -Improve readme
+
 -Post full instructions on how to build this locally
+
 -Fix settings not being saved
+
 -Improve formatting of mods HD+HR to HDHR for better usability
+
 -Allow several mods to be banned at once so you don't have to send the command multiple times
+
 -Host the bot in some server so it runs 24/7
 
 
