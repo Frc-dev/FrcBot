@@ -1,37 +1,52 @@
+osu! Recommendation Bot
+This is a bot that recommends maps based on your top plays. You can either:
 
-TODO:
+Run it locally by downloading the source code and running:
 
--Improve readme
+bash
+Copiar
+Editar
+python localClient.py
+Use it in-game by sending a DM to Frc in osu!
 
--Post full instructions on how to build this locally
+Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM me to let me know.
 
--Fix settings not being saved
+💡 Features
+!r — Recommends you a map based on your top plays.
 
--Improve formatting of mods HD+HR to HDHR for better usability
+!settings [banned_mods] [acc_preference] — Change your preferences for recommendations.
 
--Allow several mods to be banned at once so you don't have to send the command multiple times
+Example: !settings acc_preference 98
 
--Host the bot in some server so it runs 24/7
+!settings acc_preference [95, 98, 100] — Recommends maps where your chosen accuracy will yield positive results. Default is 98.
 
+!settings banned_mods — Displays currently banned mods.
 
-This is a bot you can either download the source code and run yourself with python localClient.py or send a DM to Frc in osu! (if you receive no answer my computer is off or I forgot to turn on the bot feel free to send me a DM)
+!settings banned_mods [NM, HD, HR, HDHR, HDDT, HDDTHR] — Toggle mod combinations to exclude from recommendations.
 
-The cool thing is this bot uses the v2 api so it will read your lazer plays and take them into account for recommendation + it will provide lazer pp values
+The bot uses the osu! v2 API, so it includes your lazer plays and returns lazer pp values.
 
-Features:
+📋 TODO
+ Improve this README
 
-!r > Will recommend you a map based on your top plays
+ Post full instructions on how to build and run locally
 
-!settings [banned_mods] [acc_preference] > change your preferences for the maps in !r
+ Fix settings not being saved
 
-!settings acc_preference [95,98,100] > the bot will recommend you maps where getting your acc_preference will yield positive results, default is 98
+ Normalize mod formatting (e.g., HD+HR → HDHR)
 
-!settings banned_mods > informative
+ Allow banning multiple mods at once (no need to send the command repeatedly)
 
-!settings banned_mods [NM,HD,HR,HD+HR,HD+DT,HD+DT+HR] > toggle combinations of mods that you don't want to be sent by !r
+ Host the bot on a server so it's available 24/7
 
-Credits:
+⚙️ Requirements
+Python 3.8+
 
-rosu-pp-py for performance calculation
+Dependencies listed in requirements.txt
 
-ossapi for v2 api wrapper usage
+osu! v2 API credentials
+
+🧠 Credits
+rosu-pp-py — For performance point calculation
+
+ossapi — osu! v2 API wrapper
