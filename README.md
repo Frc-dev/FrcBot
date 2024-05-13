@@ -54,13 +54,13 @@ Install the dependencies with:
 ```bash
 pip install rosu-pp-py ossapi requests python-dotenv
 ```
-# 🛠️ Setup Instructions
+#### 🛠️ Setup Instructions
 
 Once the source code is downloaded, you'll need to configure a few things before running the bot.
 
 ---
 
-# 1. Create a `.env` file
+##### 1. Create a `.env` file
 
 In the root directory, create a file named `.env` with the following content:
 
@@ -78,7 +78,7 @@ SONGS_ROOT_DIR=""
 
 ---
 
-# 2. Populate the Database
+##### 2. Populate the Database
 
 From the project root, run:
 
@@ -90,7 +90,7 @@ This will scan the specified Songs directory and populate your SQLite database.
 
 ---
 
-# 3. Start the Bot
+##### 3. Start the Bot
 
 You can now choose how you want to run the bot:
 
