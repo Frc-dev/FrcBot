@@ -30,8 +30,8 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## 📋 TODO
 
-- [ ] Improve this README
-- [ ] Post full instructions on how to build and run locally
+- [x] Improve this README
+- [x] Post full instructions on how to build and run locally
 - [ ] Fix settings not being saved
 - [ ] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
 - [ ] Allow banning multiple mods at once (no need to send the command repeatedly)
