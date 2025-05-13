@@ -1,5 +1,7 @@
 This is a bot you can either download the source code and run yourself with python localClient.py or sending a DM to Frc in osu!
 
+The cool thing is this bot uses the v2 api so it will read your lazer plays and take them into account for recommendation + it will provide lazer pp values
+
 Features:
 
 !r > Will recommend you a map based on your top plays
