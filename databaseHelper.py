@@ -1,5 +1,24 @@
 import sqlite3
 
+def get_maps_in_pp_range(pp_min, pp_max, db_path="osu_scores.db"):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    query = """
+    SELECT map_name, beatmap_id, beatmap_set_id, mods, acc_95, acc_98, acc_100
+    FROM scores
+    WHERE acc_98 BETWEEN ? AND ?
+    ORDER BY acc_98 DESC
+    LIMIT 10
+    """
+
+    cursor.execute(query, (pp_min, pp_max))
+    results = cursor.fetchall()
+    conn.close()
+
+    return results
+
+
 def connect_to_db(db_name="osu_scores.db"):
     """Create a connection to the SQLite database and return the connection object."""
     return sqlite3.connect(db_name)
@@ -82,3 +101,108 @@ def store_records_in_batch(records):
     
     # Close the connection
     conn.close()
+
+import sqlite3
+
+def get_user_settings(username):
+    conn = sqlite3.connect("osu_scores.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT banned_mods, acc_preference FROM user_settings WHERE username = ?", (username,))
+    row = cursor.fetchone()
+
+    if row:
+        return {
+            "banned_mods": row[0].split(",") if row[0] else [],
+            "acc_preference": row[1]
+        }
+    else:
+        # Return default settings if none found
+        return {
+            "banned_mods": [],
+            "acc_preference": "acc_98"
+        }
+
+def update_user_settings(username, banned_mods=None, acc_preference=None):
+    conn = sqlite3.connect("osu_scores.db")
+    cursor = conn.cursor()
+
+    # Fetch existing settings
+    cursor.execute("SELECT banned_mods, acc_preference FROM user_settings WHERE username = ?", (username,))
+    row = cursor.fetchone()
+
+    if row:
+        current_banned, current_acc = row
+    else:
+        current_banned, current_acc = "", "acc_98"
+
+    # Use new values if provided, otherwise fallback to existing
+    banned_mods_str = ",".join(banned_mods) if banned_mods is not None else current_banned
+    acc_preference_str = acc_preference if acc_preference is not None else current_acc
+
+    cursor.execute("""
+        INSERT INTO user_settings (username, banned_mods, acc_preference)
+        VALUES (?, ?, ?)
+        ON CONFLICT(username) DO UPDATE SET banned_mods = ?, acc_preference = ?
+    """, (username, banned_mods_str, acc_preference_str, banned_mods_str, acc_preference_str))
+
+    conn.commit()
+    conn.close()
+
+import sqlite3
+import random
+
+def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
+    conn = sqlite3.connect("osu_scores.db")
+    cursor = conn.cursor()
+
+    lower_bound = baseline_pp - 10
+    upper_bound = baseline_pp + 10
+
+    banned_mods = set(banned_mods)
+
+    query = f"""
+        SELECT map_name, beatmap_id, beatmap_set_id, mods, acc_95, acc_98, acc_100
+        FROM scores
+        WHERE {acc_preference} BETWEEN ? AND ?
+    """
+
+    cursor.execute(query, (lower_bound, upper_bound))
+    all_rows = cursor.fetchall()
+    conn.close()
+
+    # Filter maps with disallowed mods
+    filtered = []
+    for row in all_rows:
+        mods = row[3].split('+') if row[3] else []
+        if not banned_mods.intersection(mods):
+            filtered.append(row)
+
+    if not filtered:
+        return None
+
+    chosen = random.choice(filtered)
+    return {
+        "map_name": chosen[0],
+        "beatmap_id": chosen[1],
+        "beatmap_set_id": chosen[2],
+        "mods": chosen[3],
+        "acc_95": chosen[4],
+        "acc_98": chosen[5],
+        "acc_100": chosen[6]
+    }
+
+def execute_query(query, params=()):
+    # Open a database connection
+    conn = sqlite3.connect('osu_scores.db')
+    cursor = conn.cursor()
+
+    try:
+        # Execute the query with parameters
+        cursor.execute(query, params)
+        conn.commit()
+        return cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"Error executing query: {e}")
+    finally:
+        conn.close()
