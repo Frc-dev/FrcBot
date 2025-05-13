@@ -4,7 +4,6 @@ class IRCInterface:
 
     def send(self, username, message):
         self.conn.privmsg(username, message)
-#hello
 
 class CLIInterface:
     def send(self, username, message):
