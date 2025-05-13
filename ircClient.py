@@ -33,6 +33,7 @@ class OsuRecommendationBot:
             handle_settings_command(self, sender, parts[1:] if len(parts) > 1 else [])
 
     def run(self):
+        self.conn.privmsg("Frc", f"Wakey wakey, Ethan...")
         # This method runs the bot continuously
         while True:
             try:
