@@ -53,11 +53,12 @@ This is a bot that recommends maps based on your top plays. You can either:
   - `ossapi`
   - `requests`
   - `dotenv`
+  - `irc`
 
 Install the dependencies with:
 
 ```bash
-pip install rosu-pp-py ossapi requests python-dotenv
+pip install rosu-pp-py ossapi requests python-dotenv irc
 ```
 ### 🛠️ Setup Instructions
 
