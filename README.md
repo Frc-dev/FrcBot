@@ -36,6 +36,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
 - [x] Allow banning multiple mods at once (no need to send the command repeatedly)
 - [x] Host the bot on a server so it's available 24/7
+- [ ] Fix users not receiving correct format list of mods after setting them wrong
 - [ ] Handle really old map recommendations returning non-usable download links
 - [ ] Handle some beatmaps returning -1 for its beatmapset id
 - [ ] Allow setting to set specific user you want the recommendations to pull from
