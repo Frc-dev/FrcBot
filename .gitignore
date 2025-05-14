@@ -2,3 +2,6 @@
 *.env
 *.pyc
 *.json
+/__pycache__/
+/cache/
+/logs/

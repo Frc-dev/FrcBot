@@ -22,7 +22,7 @@ This is a bot that recommends maps based on your top plays. You can either:
   - Example: `!settings acc_preference 98`
 - `!settings acc_preference [95, 98, 100]` — Recommends maps where your chosen accuracy will yield positive results. Default is 98.
 - `!settings banned_mods` — Displays currently banned mods.
-- `!settings banned_mods [NM, HD, HR, HDHR, HDDT, HDDTHR]` — Toggle mod combinations to exclude from recommendations.
+- `!settings banned_mods [NM, HD, HR, HDHR, HDDT, HRDT, HDHRDT]` — Toggle mod combinations to exclude from recommendations. You can set them individually or in HD, HDHR, HRDT format to toggle several at once
 
 > _The bot uses the **osu! v2 API**, so it includes your lazer plays and returns lazer pp values._
 
@@ -32,10 +32,15 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 - [x] Improve this README
 - [x] Post full instructions on how to build and run locally
-- [ ] Fix settings not being saved
-- [ ] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
-- [ ] Allow banning multiple mods at once (no need to send the command repeatedly)
+- [x] Fix settings not being saved
+- [x] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
+- [x] Allow banning multiple mods at once (no need to send the command repeatedly)
 - [ ] Host the bot on a server so it's available 24/7
+- [ ] Handle really old map recommendations returning non-usable download links
+- [ ] Handle some beatmaps returning -1 for its beatmapset id
+- [ ] Allow setting to set specific user you want the recommendations to pull from
+- [ ] Allow setting to set custom pp baseline
+- [ ] Find a way to keep the database updated as new maps are ranked
 
 ---
 

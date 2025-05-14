@@ -1,4 +1,3 @@
-# settingsHelper.py
 import sqlite3
 from constants import VALID_MODS, VALID_ACCURACIES
 from databaseHelper import execute_query
@@ -22,8 +21,7 @@ def create_db():
     conn.close()
 
 def get_user_settings(username):
-    # Assuming you have a method to retrieve from your database
-    # The result will contain a tuple or dictionary with banned_mods and acc_preference
+    """Retrieve user settings from the database"""
     query = "SELECT banned_mods, acc_preference FROM user_settings WHERE username = ?"
     result = execute_query(query, (username,))
 
@@ -34,16 +32,8 @@ def get_user_settings(username):
     else:
         return [], "98"  # Default banned_mods and acc_preference if no settings are found
 
-# settingsHelper.py
-
-import sqlite3
-from constants import VALID_MODS  # Import the constants for valid mods
-
-# Database file path
-DB_PATH = 'osu_scores.db'
-
-# Function to get the banned mods for a user
 def get_banned_mods(username):
+    """Retrieve banned mods for a user"""
     query = "SELECT banned_mods FROM user_settings WHERE username = ?"
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -53,58 +43,82 @@ def get_banned_mods(username):
     
     if result:
         return result[0].split(",")  # Assuming banned_mods are stored as a comma-separated list
-    return []
+    return []  # Default empty list for banned mods
 
 def update_banned_mods(username, new_banned_mods):
-    # Ensure new_banned_mods is a list
+    """Update the banned mods for a user. Adds/removes valid mods, ignores duplicates and warns about invalid ones."""
+
+    print(f"{username}: {new_banned_mods}")
+
+    # Normalize input
     if isinstance(new_banned_mods, str):
-        new_banned_mods = [mod.strip() for mod in new_banned_mods.split(',')]
-    elif not isinstance(new_banned_mods, list):
-        raise ValueError("new_banned_mods should be either a string or a list.")
+        new_banned_mods = [mod.strip().upper() for mod in new_banned_mods.split(',')]
+    elif isinstance(new_banned_mods, list):
+        new_banned_mods = [mod.strip().upper() for mod in new_banned_mods]
+    else:
+        raise ValueError("new_banned_mods should be a string or list.")
 
-    # Validate mods
+    # Separate valid and invalid mods
+    valid_mods = [mod for mod in new_banned_mods if mod in VALID_MODS]
     invalid_mods = [mod for mod in new_banned_mods if mod not in VALID_MODS]
-    if invalid_mods:
-        return False, invalid_mods
 
-    # Get current mods
-    current_mods = get_banned_mods(username)
+    # Remove duplicates
+    valid_mods = list(set(valid_mods))
 
-    # Toggle behavior: add if not in list, remove if in list
-    updated_mods = set(current_mods)
-    for mod in new_banned_mods:
-        if mod in updated_mods:
-            updated_mods.remove(mod)
+    # Load current mods
+    current_mods = set(get_banned_mods(username))
+
+    # Toggle logic
+    for mod in valid_mods:
+        if mod in current_mods:
+            current_mods.remove(mod)
         else:
-            updated_mods.add(mod)
+            current_mods.add(mod)
+
+    updated_mods = ",".join(sorted(current_mods))
 
     # Save to DB
-    query = "UPDATE user_settings SET banned_mods = ? WHERE username = ?"
+    query = """
+        INSERT INTO user_settings (username, banned_mods, acc_preference) 
+        VALUES (?, ?, ?) 
+        ON CONFLICT(username) DO UPDATE SET banned_mods = excluded.banned_mods
+    """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute(query, (",".join(sorted(updated_mods)), username))
+    cursor.execute(query, (username, updated_mods, "",))  # acc_preference left blank if unknown
     conn.commit()
     conn.close()
 
-    return True, []
-
+    # Return success with invalids (for messaging)
+    return True, invalid_mods
 
 def update_acc_preference(username, acc_preference):
-    """Update the accuracy preference for a user in the database"""
+    """Update the accuracy preference for a user"""
     if acc_preference not in VALID_ACCURACIES:
-        return False
-    
+        return False  # Return False if the accuracy preference is invalid
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    cursor.execute("""
-    INSERT INTO user_settings (username, banned_mods, acc_preference)
-    VALUES (?, ?, ?)
-    ON CONFLICT(username) 
-    DO UPDATE SET acc_preference = ?;
-    """, (username, "", acc_preference, acc_preference))
+    # Check if the user exists in the table
+    cursor.execute("SELECT username FROM user_settings WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    
+    # If the user doesn't exist, create a new record with default banned_mods and the given acc_preference
+    if not result:
+        cursor.execute("""
+        INSERT INTO user_settings (username, banned_mods, acc_preference)
+        VALUES (?, ?, ?)
+        """, (username, "", acc_preference))  # Empty banned_mods for the new user
+    
+    # If the user exists, update the acc_preference
+    else:
+        cursor.execute("""
+        UPDATE user_settings 
+        SET acc_preference = ? 
+        WHERE username = ?
+        """, (acc_preference, username))
     
     conn.commit()
     conn.close()
     return True
-

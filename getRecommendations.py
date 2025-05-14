@@ -27,7 +27,6 @@ def get_recommendations(pp_baseline, acc_preference="98"):
         FROM scores
         WHERE {acc_column} BETWEEN ? AND ?
         ORDER BY {acc_column} DESC
-        LIMIT 10;
         """
         cursor.execute(query, (lower_bound, upper_bound))
         results = cursor.fetchall()

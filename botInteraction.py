@@ -1,5 +1,5 @@
 import random
-from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings
+from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods
 from fetchTopScores import fetch_top_scores
 from getRecommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
@@ -8,46 +8,77 @@ def get_beatmap_url(beatmap_id):
     return f"https://osu.ppy.sh/beatmaps/{beatmap_id}"
 
 def handle_recommendation_command(interface, username):
+    # Get top scores for the user
     top_scores = fetch_top_scores(username)
     if not top_scores or len(top_scores) < 10:
-        interface.send(username, "Not enough data to generate recommendations.")
-        return
+        # If not enough data, return the message instead of sending it
+        reply = "Not enough data to generate recommendations."
+        return reply
 
+    # Extract the PP (Performance Points) of the last score
     pp = float(top_scores[-1].get("pp", 0))
+    
+    # Get user settings (banned mods and accuracy preference)
     banned_mods, acc_pref = get_user_settings(username)
+
+    # Get all recommendations based on PP and accuracy preference
     all_recs = get_recommendations(pp, acc_pref)
+    
+    # Filter out recommendations based on banned mods
     filtered = [rec for rec in all_recs if rec[3] not in banned_mods]
 
+    # Check if there are any valid recommendations
     if filtered:
+        # Select a random recommendation
         chosen = random.choice(filtered)
         map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
+        print(chosen)
         url = get_beatmap_url(chosen[1])
-        interface.send(username, f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp")
+        
+        # Store the message in the reply variable
+        reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
     else:
-        interface.send(username, "No maps found in that PP range that match your preferences.")
+        # If no valid recommendations, store the message in the reply variable
+        reply = "No maps found in that PP range that match your preferences."
+    
+    return reply
 
 def handle_settings_command(interface, username, args):
     if not args:
         banned_mods, acc_pref = get_user_settings(username)
-        interface.send(username, f"Your settings:\n  Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'}\n  Accuracy Preference: {acc_pref}")
-        return
+        return f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
 
-    if args[0] == "banned_mods":
+    setting = args[0]
+
+    if setting == "banned_mods":
         if len(args) == 1:
             banned_mods, _ = get_user_settings(username)
-            interface.send(username, f"Current banned mods: {', '.join(banned_mods) if banned_mods else 'None'}")
+            return f"Current banned mods: {', '.join(banned_mods) if banned_mods else 'None'}"
         else:
-            success, invalid = update_banned_mods(username, args[1:])
-            if success:
-                interface.send(username, f"Updated banned mods: {', '.join(args[1:])}")
-            else:
-                interface.send(username, f"Invalid mods: {', '.join(invalid)}\nValid mods: {', '.join(VALID_MODS)}")
+            # Join arguments and clean input
+            raw_input = ' '.join(args[1:]).replace('[', '').replace(']', '')
+            new_banned_mods = [mod.strip() for mod in raw_input.split(',') if mod.strip()]
 
-    elif args[0] == "acc_preference":
+            # Fallback if input wasn't comma-separated
+            if len(new_banned_mods) == 1 and ' ' in new_banned_mods[0]:
+                new_banned_mods = new_banned_mods[0].split()
+
+            success, invalid = update_banned_mods(username, new_banned_mods)
+            if success:
+                reply = f"Updated banned mods: {', '.join(sorted(set(args[1:])))}"
+                if invalid:
+                    reply += f" (Ignored invalid mods: {', '.join(invalid)})"
+            else:
+                reply = f"Invalid mods: {', '.join(invalid)} | Valid mods: {', '.join(VALID_MODS)}"
+
+
+    elif setting == "acc_preference":
         if len(args) == 2 and args[1] in VALID_ACCURACIES:
             result = update_acc_preference(username, args[1])
-            interface.send(username, f"Updated accuracy preference to {args[1]}" if result else "Error updating accuracy preference.")
+            return f"Updated accuracy preference to {args[1]}" if result else "Error updating accuracy preference."
         else:
-            interface.send(username, f"Valid accuracy values: {', '.join(VALID_ACCURACIES)}")
+            return f"Valid accuracy values: {', '.join(VALID_ACCURACIES)}"
+
     else:
-        interface.send(username, "Unknown !settings command. Options: banned_mods, acc_preference")
+        return "Unknown !settings command. Options: banned_mods, acc_preference"
+

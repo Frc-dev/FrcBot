@@ -11,10 +11,14 @@ def main():
         if command == "q":
             break
         elif command == "!r":
-            handle_recommendation_command(interface, username)
+            # Handle recommendation command and capture the reply
+            reply = handle_recommendation_command(interface, username)
+            print(reply)  # Print the reply
         elif command.startswith("!settings"):
+            # Extract arguments and handle settings command
             args = command.split()[1:]
-            handle_settings_command(interface, username, args)
+            reply = handle_settings_command(interface, username, args)
+            print(reply)  # Print the reply
         else:
             print("Unknown command.")
 

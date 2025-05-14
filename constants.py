@@ -1,2 +1,2 @@
-VALID_MODS = {'NM', 'HD', 'HR', 'DT', 'HD+HR', 'HD+DT', 'HR+DT', 'HD+HR+DT'}
+VALID_MODS = {'NM', 'HD', 'HR', 'DT', 'HDHR', 'HDDT', 'HRDT', 'HDHRDT'}
 VALID_ACCURACIES = {'95', '98', '100'}
