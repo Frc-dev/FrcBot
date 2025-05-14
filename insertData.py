@@ -3,16 +3,19 @@ import datetime
 from getMapInfo import OsuParser
 from calculatePerformance import calculate_performance
 from databaseHelper import store_records_in_batch
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def main():
     # Path to the root directory where your osu! maps are stored
-    root_dir = os.path.join(os.path.expanduser("~"), "AppData", "Roaming", "osu2", "Songs")
+    root_dir = os.getenv("SONGS_ROOT_DIR")
     
     # Initialize the OsuParser with the root directory
     osu_parser = OsuParser(root_dir)
     
     # Get metadata for the first 10 osu! files
-    maps_metadata = osu_parser.get_first_n_osu_files(limit=10)
+    maps_metadata = osu_parser.get_first_n_osu_files()
 
     mods = {
         0: 'NM',
@@ -46,8 +49,11 @@ def main():
         print(f"BeatmapID: {beatmap_id}, BeatmapSetID: {beatmap_set_id}")
         print(f"File Path: {osu_file_path}")
 
-        # Load map once
-        parsed_map = calculate_performance(map_path=osu_file_path)['map']
+        try:
+            parsed_map = calculate_performance(map_path=osu_file_path)['map']
+        except ValueError as e:
+            print(f"Skipping map due to error: {e}")
+            continue
 
         # Iterate over mod combinations
         for mod_combo in modCombinations:
@@ -69,7 +75,7 @@ def main():
             record = {
                 "map_name": map_name,
                 "beatmap_set_id": int(beatmap_set_id) if beatmap_set_id else None,
-                "beatmap_id": int(beatmap_id) if beatmap_id else None,
+                "beatmap_id": int(beatmap_id) if beatmap_id and beatmap_id.isdigit() else None,
                 "mods": readable_mods,
                 "unique_score_id": unique_score_id,
                 "acc_95": acc_pp_map.get(95),

@@ -57,7 +57,7 @@ class OsuParser:
             'Osu_File_Path': relative_path
         }
 
-    def get_first_n_osu_files(self, limit=10):
+    def get_first_n_osu_files(self, limit=None):
         collected = 0
         results = []
 
@@ -78,6 +78,7 @@ class OsuParser:
                 results.append(metadata)
 
                 collected += 1
-                if collected >= limit:
+                if limit and collected >= limit:
                     return results
+
         return results
