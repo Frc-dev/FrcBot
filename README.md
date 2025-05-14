@@ -40,6 +40,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [ ] Handle some beatmaps returning -1 for its beatmapset id
 - [ ] Allow setting to set specific user you want the recommendations to pull from
 - [ ] Allow setting to set custom pp baseline
+- [ ] Add option to !r with a specific mod
 - [ ] Find a way to keep the database updated as new maps are ranked
 
 ---
