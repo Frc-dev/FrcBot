@@ -11,7 +11,7 @@ This is a bot that recommends maps based on your top plays. You can either:
     Make sure you have all the [requirements to run locally](https://github.com/Frc-dev/FrcBot/tree/master?tab=readme-ov-file#%EF%B8%8F-requirements-to-run-locally) set up before starting the bot.
 
 - **Use it in-game** by sending a DM to [**Frc**](https://osu.ppy.sh/users/4638940) in osu!  
-  > _Note: If you don't receive a response, my computer might be off or the bot isn't running. Feel free to DM the bot to let me know and I will read it._
+  > _Note: If you don't receive a response, DM the bot to let me know and I will read it, the bot should be hosted in a server and working 24/7._
 
 ---
 
@@ -36,10 +36,14 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
 - [x] Allow banning multiple mods at once (no need to send the command repeatedly)
 - [x] Host the bot on a server so it's available 24/7
+- [ ] Fix users not receiving correct format list of mods after setting them wrong
+- [ ] Add command to provide feedback to me directly
+- [ ] Rewrite beatmap lookup so it works with osu direct
 - [ ] Handle really old map recommendations returning non-usable download links
 - [ ] Handle some beatmaps returning -1 for its beatmapset id
 - [ ] Allow setting to set specific user you want the recommendations to pull from
 - [ ] Allow setting to set custom pp baseline
+- [ ] Add option to !r with a specific mod
 - [ ] Find a way to keep the database updated as new maps are ranked
 
 ---
@@ -53,11 +57,12 @@ This is a bot that recommends maps based on your top plays. You can either:
   - `ossapi`
   - `requests`
   - `dotenv`
+  - `irc`
 
 Install the dependencies with:
 
 ```bash
-pip install rosu-pp-py ossapi requests python-dotenv
+pip install rosu-pp-py ossapi requests python-dotenv irc
 ```
 ### 🛠️ Setup Instructions
 
