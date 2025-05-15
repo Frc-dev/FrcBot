@@ -1,6 +1,6 @@
 import random, os
 from datetime import datetime
-from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods
+from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference
 from fetchTopScores import fetch_top_scores
 from getRecommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
@@ -9,6 +9,12 @@ def get_beatmap_url(beatmap_id):
     return f"https://osu.ppy.sh/beatmaps/{beatmap_id}"
 
 def handle_recommendation_command(username):
+    # Get user settings (banned mods and accuracy preference)
+    banned_mods, acc_pref, fake_user = get_user_settings(username)
+
+    if fake_user:
+        username = fake_user
+
     # Get top scores for the user
     top_scores = fetch_top_scores(username)
     if not top_scores or len(top_scores) < 10:
@@ -18,9 +24,6 @@ def handle_recommendation_command(username):
 
     # Extract the PP (Performance Points) of the last score
     pp = float(top_scores[-1].get("pp", 0))
-    
-    # Get user settings (banned mods and accuracy preference)
-    banned_mods, acc_pref = get_user_settings(username)
 
     # Get all recommendations based on PP and accuracy preference
     all_recs = get_recommendations(pp, acc_pref)
@@ -45,8 +48,11 @@ def handle_recommendation_command(username):
 
 def handle_settings_command(username, args):
     if not args:
-        banned_mods, acc_pref = get_user_settings(username)
-        return f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
+        banned_mods, acc_pref, fake_user = get_user_settings(username)
+        msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
+        if fake_user:
+            msg += f" | User: {fake_user}"
+        return msg
 
     setting = args[0]
 
@@ -77,6 +83,14 @@ def handle_settings_command(username, args):
             return f"Updated accuracy preference to {args[1]}" if result else "Error updating accuracy preference."
         else:
             return f"Valid accuracy values: {', '.join(VALID_ACCURACIES)}"
+
+    elif setting == "user":
+        if len(args) == 1:
+            return f"!settings user [username|user_id] to receive the recommendations as if you were that user. !settings user 0 to remove it"
+        else:
+            target = " ".join(args[1:])
+            result = update_user_preference(target, username)
+            return f"Updated user" if result else "Error fetching user."
 
     else:
         return "Unknown !settings command. Options: banned_mods, acc_preference"

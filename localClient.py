@@ -23,6 +23,9 @@ def main():
             args = command.split()[1:]
             reply = handle_feedback_command(username, args)
             interface.send(reply)  # Print the reply
+        elif command.startswith("!h"):
+            reply = "Usage: !r, !settings, !feedback"
+            interface.send(reply)
         else:
             interface.send("Unknown command.")
 

@@ -22,7 +22,10 @@ This is a bot that recommends maps based on your top plays. You can either:
   - Example: `!settings acc_preference 98`
 - `!settings acc_preference [95, 98, 100]` — Recommends maps where your chosen accuracy will yield positive results. Default is 98.
 - `!settings banned_mods` — Displays currently banned mods.
-- `!settings banned_mods [NM, HD, HR, HDHR, HDDT, HRDT, HDHRDT]` — Toggle mod combinations to exclude from recommendations. You can set them individually or in HD, HDHR, HRDT format to toggle several at once
+- `!settings banned_mods [NM, HD, HR, HDHR, HDDT, HRDT, HDHRDT]` — Toggle mod combinations to exclude from recommendations. You can set them individually or in HD, HDHR, HRDT format to toggle several at once. By default HRDT and HDHRDT are banned.
+- `!settings user [username|userid|0]` — Set a custom user to get recommendations for, 0 will clear the current user and use yours instead.
+- `!feedback [message]` - Talk to me directly, report bugs, provide suggestions. Way easier for me to read your message and the feedback is much appreciated.
+- `!help` - Get a list of the commands you can use.
 
 > _The bot uses the **osu! v2 API**, so it includes your lazer plays and returns lazer pp values._
 
@@ -30,7 +33,6 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## 📋 TODO
 
-- [ ] Allow setting to set specific user you want the recommendations to pull from
 - [ ] Allow setting to set custom pp baseline
 - [ ] Add option to !r with a specific mod
 - [ ] Allow alliterations of mods to be used (DTHD for HDDT, HDDTHR for HDHRDT)
@@ -51,6 +53,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Host the bot on a server so it's available 24/7
 - [x] Fix users not receiving correct format list of mods after setting them wrong
 - [x] Add command to provide feedback to me directly
+- [x] Allow setting to set specific user you want the recommendations to pull from
 
 ---
 

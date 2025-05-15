@@ -7,8 +7,9 @@ def create_user_settings_table():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS user_settings (
             username TEXT PRIMARY KEY,
-            banned_mods TEXT DEFAULT '',
-            acc_preference TEXT DEFAULT 'acc_98'
+            banned_mods TEXT DEFAULT 'HRDT,HDHRDT',
+            acc_preference TEXT DEFAULT '98',
+            fake_user INTEGER
         )
     """)
     
