@@ -32,7 +32,6 @@ def handle_recommendation_command(interface, username):
         # Select a random recommendation
         chosen = random.choice(filtered)
         map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
-        print(chosen)
         url = get_beatmap_url(chosen[1])
         
         # Store the message in the reply variable
@@ -64,14 +63,13 @@ def handle_settings_command(interface, username, args):
                 new_banned_mods = new_banned_mods[0].split()
 
             success, invalid = update_banned_mods(username, new_banned_mods)
-            if success:
-                reply = f"Updated banned mods: {', '.join(sorted(set(args[1:])))}"
-                if invalid:
-                    reply += f" (Ignored invalid mods: {', '.join(invalid)})"
-            else:
-                reply = f"Invalid mods: {', '.join(invalid)} | Valid mods: {', '.join(VALID_MODS)}"
+            updated_mods = get_banned_mods(username)
 
-
+            reply = f"Updated banned mods: {', '.join(sorted(updated_mods)) if updated_mods else 'None'}"
+            if invalid:
+                reply += f" | Ignored invalid mods: {', '.join(invalid)} | Valid mods: {', '.join(VALID_MODS)}"
+            return reply
+        
     elif setting == "acc_preference":
         if len(args) == 2 and args[1] in VALID_ACCURACIES:
             result = update_acc_preference(username, args[1])

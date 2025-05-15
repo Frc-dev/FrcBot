@@ -42,13 +42,11 @@ def get_banned_mods(username):
     conn.close()
     
     if result:
-        return result[0].split(",")  # Assuming banned_mods are stored as a comma-separated list
+        return [mod for mod in result[0].split(",") if mod]
     return []  # Default empty list for banned mods
 
 def update_banned_mods(username, new_banned_mods):
     """Update the banned mods for a user. Adds/removes valid mods, ignores duplicates and warns about invalid ones."""
-
-    print(f"{username}: {new_banned_mods}")
 
     # Normalize input
     if isinstance(new_banned_mods, str):
