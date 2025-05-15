@@ -36,7 +36,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
 - [x] Allow banning multiple mods at once (no need to send the command repeatedly)
 - [x] Host the bot on a server so it's available 24/7
-- [ ] Fix users not receiving correct format list of mods after setting them wrong
+- [x] Fix users not receiving correct format list of mods after setting them wrong
 - [ ] Add command to provide feedback to me directly
 - [ ] Rewrite beatmap lookup so it works with osu direct
 - [ ] Handle really old map recommendations returning non-usable download links
