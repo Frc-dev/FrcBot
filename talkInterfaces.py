@@ -6,5 +6,5 @@ class IRCInterface:
         self.conn.privmsg(username, message)
 
 class CLIInterface:
-    def send(self, username, message):
+    def send(self, message):
         print(message)

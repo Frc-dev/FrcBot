@@ -30,6 +30,19 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## 📋 TODO
 
+- [ ] Allow setting to set specific user you want the recommendations to pull from
+- [ ] Allow setting to set custom pp baseline
+- [ ] Add option to !r with a specific mod
+- [ ] Allow alliterations of mods to be used (DTHD for HDDT, HDDTHR for HDHRDT)
+- [ ] Rewrite beatmap lookup so it works with osu direct
+- [ ] Handle really old map recommendations returning non-usable download links
+- [ ] Handle some beatmaps returning -1 for its beatmapset id
+- [ ] Find a way to keep the database updated as new maps are ranked
+
+---
+
+## ✅ Done
+
 - [x] Improve this README
 - [x] Post full instructions on how to build and run locally
 - [x] Fix settings not being saved
@@ -37,14 +50,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Allow banning multiple mods at once (no need to send the command repeatedly)
 - [x] Host the bot on a server so it's available 24/7
 - [x] Fix users not receiving correct format list of mods after setting them wrong
-- [ ] Add command to provide feedback to me directly
-- [ ] Rewrite beatmap lookup so it works with osu direct
-- [ ] Handle really old map recommendations returning non-usable download links
-- [ ] Handle some beatmaps returning -1 for its beatmapset id
-- [ ] Allow setting to set specific user you want the recommendations to pull from
-- [ ] Allow setting to set custom pp baseline
-- [ ] Add option to !r with a specific mod
-- [ ] Find a way to keep the database updated as new maps are ranked
+- [x] Add command to provide feedback to me directly
 
 ---
 

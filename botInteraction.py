@@ -1,4 +1,5 @@
-import random
+import random, os
+from datetime import datetime
 from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods
 from fetchTopScores import fetch_top_scores
 from getRecommendations import get_recommendations
@@ -7,7 +8,7 @@ from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
 def get_beatmap_url(beatmap_id):
     return f"https://osu.ppy.sh/beatmaps/{beatmap_id}"
 
-def handle_recommendation_command(interface, username):
+def handle_recommendation_command(username):
     # Get top scores for the user
     top_scores = fetch_top_scores(username)
     if not top_scores or len(top_scores) < 10:
@@ -42,7 +43,7 @@ def handle_recommendation_command(interface, username):
     
     return reply
 
-def handle_settings_command(interface, username, args):
+def handle_settings_command(username, args):
     if not args:
         banned_mods, acc_pref = get_user_settings(username)
         return f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
@@ -80,3 +81,23 @@ def handle_settings_command(interface, username, args):
     else:
         return "Unknown !settings command. Options: banned_mods, acc_preference"
 
+LOG_DIR = os.path.join(os.path.dirname(__file__), "logs", "feedback")
+LOG_FILE = os.path.join(LOG_DIR, "feedback.txt")
+
+def handle_feedback_command(username, args):
+    # Ensure feedback directory exists
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+    if not args:
+        # No feedback provided
+        return "Use !feedback <your message> to report bugs or provide suggestions to me directly. I promise I will read it."
+    
+    # Join everything after !feedback into one string
+    message = " ".join(args).strip()
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    # Append to file
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {username}: {message}\n")
+
+    return "Thanks for your feedback!"
