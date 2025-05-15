@@ -47,8 +47,8 @@ def handle_recommendation_command(username):
     return reply
 
 def handle_settings_command(username, args):
+    banned_mods, acc_pref, fake_user = get_user_settings(username)
     if not args:
-        banned_mods, acc_pref, fake_user = get_user_settings(username)
         msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
         if fake_user:
             msg += f" | User: {fake_user}"
@@ -58,7 +58,6 @@ def handle_settings_command(username, args):
 
     if setting == "banned_mods":
         if len(args) == 1:
-            banned_mods, _ = get_user_settings(username)
             return f"Current banned mods: {', '.join(banned_mods) if banned_mods else 'None'}"
         else:
             # Join arguments and clean input
