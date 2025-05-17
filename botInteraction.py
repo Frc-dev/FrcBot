@@ -47,7 +47,7 @@ def handle_recommendation_command(username):
         # Select a random recommendation
         chosen = random.choice(filtered)
         map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
-        beatmap_set_id, beatmap_id = chosen[1], chosen[2]
+        beatmap_set_id, beatmap_id = chosen[2], chosen[1]
         url = get_beatmap_url(beatmap_set_id, beatmap_id)
         
         # Store the message in the reply variable
