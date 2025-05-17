@@ -50,8 +50,11 @@ def handle_recommendation_command(username):
         beatmap_set_id, beatmap_id = chosen[2], chosen[1]
         url = get_beatmap_url(beatmap_set_id, beatmap_id)
         
-        # Store the message in the reply variable
-        reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
+        if url:
+            reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
+        else:
+            # Fallback if url is None, just print map name without link
+            reply = f"{map_name} | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp | (Download not available)"
     else:
         # If no valid recommendations, store the message in the reply variable
         reply = "No maps found in that PP range that match your preferences."
