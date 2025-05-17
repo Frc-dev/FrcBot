@@ -66,7 +66,7 @@ class OsuRecommendationBot:
         sender = event.source.split('!')[0]
         message = event.arguments[0].strip()
         args = message.split()[1:]
-
+        reply = f"Message: {message} Args: {args}"
         # Get current timestamp for printing
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -84,9 +84,6 @@ class OsuRecommendationBot:
                 reply = handle_feedback_command(sender, args)
             elif message.startswith("!h"):
                 reply = "Usage: !r, !settings, !feedback"
-            elif message.startswith("/np"):
-                reply = args
-                #reply = handle_playing_command(sender, args)
 
             # Print the reply that the bot sends to the user with timestamp
             print(f"[{timestamp}] [PM to {sender}]: {reply}")
