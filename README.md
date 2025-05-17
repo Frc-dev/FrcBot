@@ -33,6 +33,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## 📋 TODO
 
+- [ ] Add /np command
 - [ ] Allow setting to set custom pp baseline
 - [ ] Add option to !r with a specific mod
 - [ ] Allow alliterations of mods to be used (DTHD for HDDT, HDDTHR for HDHRDT)
