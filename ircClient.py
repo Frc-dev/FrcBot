@@ -24,7 +24,8 @@ class OsuRecommendationBot:
 
     def debug_all(self, connection, event):
         sender = event.source.split('!')[0]
-        self.interface.send(sender, f"[{event.type}] {event.source}: {event.arguments}")
+        reply = f"[{event.type}] {event.source}: {event.arguments}"
+        self.interface.send(sender, reply)
 
     def log_conversation(self, sender, message, reply):
         """Function to log conversation to a file specific to the user in the logs folder."""
@@ -71,9 +72,7 @@ class OsuRecommendationBot:
         sender = event.source.split('!')[0]
         message = event.arguments[0].strip()
         args = message.split()[1:]
-        reply = f"Event: {event} Message: {message} Args: {args}"
-        self.interface.send(sender, reply)
-        return
+        reply = "Message: {message} Args: "
         # Get current timestamp for printing
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
