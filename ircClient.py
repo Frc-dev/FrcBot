@@ -11,6 +11,7 @@ load_dotenv()
 
 OSU_USERNAME = os.getenv("OSU_IRC_USERNAME")
 OSU_IRC_PASSWORD = os.getenv("OSU_IRC_PASSWORD")
+IGNORED_SENDERS = {"BanchoBot"}
 
 class OsuRecommendationBot:
     def __init__(self):
@@ -70,6 +71,10 @@ class OsuRecommendationBot:
 
     def on_privmsg(self, conn, event):
         sender = event.source.split('!')[0]
+
+        if sender in IGNORED_SENDERS:
+            return
+        
         message = event.arguments[0].strip()
         args = message.split()[1:]
         reply = "Message: {message} Args: "
