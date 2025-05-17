@@ -1,5 +1,3 @@
-Announcement: Bot went rogue today May 18th and will be offline until I figure out why. Sorry to everyone affected! (you got an unsolicited DM pretty much)
-
 # osu! lazer Recommendation Bot
 
 This is a bot that recommends maps based on your top plays. You can either:
