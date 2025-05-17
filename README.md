@@ -33,10 +33,9 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## 📋 TODO
 
-- [ ] Add /np command
-- [ ] Allow setting to set custom pp baseline
+- [ ] Add /np command with !with options
 - [ ] Add option to !r with a specific mod
-- [ ] Handle some beatmaps returning -1 for its beatmapset id
+- [ ] Allow setting to set custom pp baseline
 - [ ] Find a way to keep the database updated as new maps are ranked
 
 ---
@@ -55,6 +54,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Allow alliterations of mods to be used (DTHD for HDDT, HDDTHR for HDHRDT)
 - [x] Rewrite beatmap lookup so it works with osu direct
 - [x] Handle really old map recommendations returning non-usable download links
+- [x] Handle some beatmaps returning -1 for its beatmapset id
 
 ---
 

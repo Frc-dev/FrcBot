@@ -26,6 +26,10 @@ class OsuRecommendationBot:
     def debug_all(self, connection, event):
         sender = event.source.split('!')[0]
         reply = f"[{event.type}] {event.source}: {event.arguments}"
+
+        if sender in IGNORED_SENDERS:
+            return
+        
         self.interface.send(sender, reply)
 
     def log_conversation(self, sender, message, reply):
