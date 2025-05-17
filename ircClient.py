@@ -21,16 +21,6 @@ class OsuRecommendationBot:
 
         self.conn.add_global_handler("welcome", self.on_connect)
         self.conn.add_global_handler("privmsg", self.on_privmsg)
-        self.conn.add_global_handler("all_events", self.debug_all)
-
-    def debug_all(self, connection, event):
-        sender = event.source.split('!')[0]
-        reply = f"[{event.type}] {event.source}: {event.arguments}"
-
-        if sender in IGNORED_SENDERS:
-            return
-        
-        self.interface.send(sender, reply)
 
     def log_conversation(self, sender, message, reply):
         """Function to log conversation to a file specific to the user in the logs folder."""
