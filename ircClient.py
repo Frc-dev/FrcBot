@@ -67,6 +67,8 @@ class OsuRecommendationBot:
         message = event.arguments[0].strip()
         args = message.split()[1:]
         reply = f"Message: {message} Args: {args}"
+        self.interface.send(sender, reply)
+        return
         # Get current timestamp for printing
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
