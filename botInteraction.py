@@ -132,6 +132,3 @@ def get_valid_session(username):
     # Expire and clean up stale session
     user_sessions.pop(username, None)
     return None
-
-def handle_playing_command(username, args):
-    
