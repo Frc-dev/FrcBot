@@ -1,7 +1,7 @@
 import irc.client
 import time
 from talkInterfaces import IRCInterface
-from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command
+from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command, handle_playing_command
 import os
 from dotenv import load_dotenv
 from datetime import datetime
@@ -84,6 +84,9 @@ class OsuRecommendationBot:
                 reply = handle_feedback_command(sender, args)
             elif message.startswith("!h"):
                 reply = "Usage: !r, !settings, !feedback"
+            elif message.startswith("/np"):
+                reply = args
+                #reply = handle_playing_command(sender, args)
 
             # Print the reply that the bot sends to the user with timestamp
             print(f"[{timestamp}] [PM to {sender}]: {reply}")

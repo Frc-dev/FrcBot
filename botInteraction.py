@@ -1,4 +1,4 @@
-import random, os
+import random, os, time
 from datetime import datetime
 from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference
 from fetchTopScores import fetch_top_scores
@@ -52,6 +52,7 @@ def handle_settings_command(username, args):
         msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
         if fake_user:
             msg += f" | User: {fake_user}"
+        msg += f" | Usage: banned_mods acc_preference user"
         return msg
 
     setting = args[0]
@@ -114,3 +115,23 @@ def handle_feedback_command(username, args):
         f.write(f"[{timestamp}] {username}: {message}\n")
 
     return "Thanks for your feedback!"
+
+user_sessions = {}
+def start_np_session(username, map_info):
+    user_sessions[username] = {
+        "map_info": map_info,
+        "timestamp": time.time()
+    }
+
+def get_valid_session(username):
+    session = user_sessions.get(username)
+    if session and (time.time() - session["timestamp"] <= 300):
+        # Refresh timestamp to extend session
+        session["timestamp"] = time.time()
+        return session
+    # Expire and clean up stale session
+    user_sessions.pop(username, None)
+    return None
+
+def handle_playing_command(username, args):
+    
