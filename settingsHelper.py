@@ -64,10 +64,12 @@ def get_banned_mods(username):
         return [mod for mod in result[0].split(",") if mod]
     return []  # Default empty list for banned mods
 
+import sqlite3
+
 def update_banned_mods(username, new_banned_mods):
     """Update the banned mods for a user. Adds/removes valid mods, ignores duplicates and warns about invalid ones."""
 
-    # Normalize input
+    # Normalize input to uppercase strings
     if isinstance(new_banned_mods, str):
         new_banned_mods = [mod.strip().upper() for mod in new_banned_mods.split(',')]
     elif isinstance(new_banned_mods, list):
@@ -75,18 +77,29 @@ def update_banned_mods(username, new_banned_mods):
     else:
         raise ValueError("new_banned_mods should be a string or list.")
 
-    # Separate valid and invalid mods
-    valid_mods = [mod for mod in new_banned_mods if mod in VALID_MODS]
-    invalid_mods = [mod for mod in new_banned_mods if mod not in VALID_MODS]
+    normalized_mods = []
+    invalid_mods = []
+
+    # Normalize each mod against VALID_MODS keys and variants
+    for mod in new_banned_mods:
+        matched = None
+        for key, variants in VALID_MODS.items():
+            if mod in variants:
+                matched = key
+                break
+        if matched:
+            normalized_mods.append(matched)
+        else:
+            invalid_mods.append(mod)
 
     # Remove duplicates
-    valid_mods = list(set(valid_mods))
+    normalized_mods = list(set(normalized_mods))
 
-    # Load current mods
+    # Load current mods from DB or storage
     current_mods = set(get_banned_mods(username))
 
-    # Toggle logic
-    for mod in valid_mods:
+    # Toggle mods in current_mods set
+    for mod in normalized_mods:
         if mod in current_mods:
             current_mods.remove(mod)
         else:
@@ -94,7 +107,7 @@ def update_banned_mods(username, new_banned_mods):
 
     updated_mods = ",".join(sorted(current_mods))
 
-    # Save to DB
+    # Save updated mods to DB
     query = """
         INSERT INTO user_settings (username, banned_mods) 
         VALUES (?, ?) 
@@ -102,11 +115,11 @@ def update_banned_mods(username, new_banned_mods):
     """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute(query, (username, updated_mods))  # acc_preference left blank if unknown
+    cursor.execute(query, (username, updated_mods))
     conn.commit()
     conn.close()
 
-    # Return success with invalids (for messaging)
+    # Return success flag and list of invalid mods for messaging
     return True, invalid_mods
 
 def update_acc_preference(username, acc_preference):

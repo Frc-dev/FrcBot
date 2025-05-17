@@ -5,8 +5,19 @@ from fetchTopScores import fetch_top_scores
 from getRecommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
 
-def get_beatmap_url(beatmap_id):
-    return f"https://osu.ppy.sh/beatmaps/{beatmap_id}"
+def get_beatmap_url(beatmap_set_id, beatmap_id):
+    """
+    Returns a properly formatted osu! beatmap URL.
+    Returns None if IDs are invalid and a link can't be constructed.
+    """
+    if not beatmap_set_id or beatmap_set_id <= 0:
+        return None  # beatmap_set_id is required for the full link
+
+    if not beatmap_id or beatmap_id <= 0:
+        return f"https://osu.ppy.sh/beatmapsets/{beatmap_set_id}"
+
+    return f"https://osu.ppy.sh/beatmapsets/{beatmap_set_id}#osu/{beatmap_id}"
+
 
 def handle_recommendation_command(username):
     # Get user settings (banned mods and accuracy preference)
@@ -36,7 +47,8 @@ def handle_recommendation_command(username):
         # Select a random recommendation
         chosen = random.choice(filtered)
         map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
-        url = get_beatmap_url(chosen[1])
+        beatmap_set_id, beatmap_id = chosen[1], chosen[2]
+        url = get_beatmap_url(beatmap_set_id, beatmap_id)
         
         # Store the message in the reply variable
         reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
@@ -63,20 +75,36 @@ def handle_settings_command(username, args):
         else:
             # Join arguments and clean input
             raw_input = ' '.join(args[1:]).replace('[', '').replace(']', '')
-            new_banned_mods = [mod.strip() for mod in raw_input.split(',') if mod.strip()]
+            # Split on commas or spaces to handle both "DT HD" and "DT,HD"
+            potential_mods = []
+            for part in raw_input.split(','):
+                potential_mods.extend(part.strip().split())
 
-            # Fallback if input wasn't comma-separated
-            if len(new_banned_mods) == 1 and ' ' in new_banned_mods[0]:
-                new_banned_mods = new_banned_mods[0].split()
+            normalized_mods = []
+            invalid_mods = []
 
-            success, invalid = update_banned_mods(username, new_banned_mods)
+            for mod in potential_mods:
+                mod_upper = mod.upper()
+                # Find the key in VALID_MODS whose value set includes the mod_upper
+                matched = None
+                for key, variants in VALID_MODS.items():
+                    if mod_upper in variants:
+                        matched = key
+                        break
+                if matched:
+                    normalized_mods.append(matched)
+                else:
+                    invalid_mods.append(mod)
+
+            success, invalid = update_banned_mods(username, normalized_mods)
             updated_mods = get_banned_mods(username)
 
             reply = f"Updated banned mods: {', '.join(sorted(updated_mods)) if updated_mods else 'None'}"
-            if invalid:
-                reply += f" | Ignored invalid mods: {', '.join(invalid)} | Valid mods: {', '.join(VALID_MODS)}"
+            if invalid_mods or invalid:
+                all_invalid = invalid_mods + invalid
+                reply += f" | Ignored invalid mods: {', '.join(all_invalid)} | Valid mods: {', '.join(VALID_MODS)}"
             return reply
-        
+
     elif setting == "acc_preference":
         if len(args) == 2 and args[1] in VALID_ACCURACIES:
             result = update_acc_preference(username, args[1])
