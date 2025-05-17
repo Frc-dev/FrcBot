@@ -1,7 +1,7 @@
 import irc.client
 import time
 from talkInterfaces import IRCInterface
-from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command, handle_playing_command
+from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command
 import os
 from dotenv import load_dotenv
 from datetime import datetime
