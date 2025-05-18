@@ -21,17 +21,7 @@ class OsuRecommendationBot:
 
         self.conn.add_global_handler("welcome", self.on_connect)
         self.conn.add_global_handler("privmsg", self.on_privmsg)
-        self.conn.add_global_handler("all_events", self.debug_all)
-
-    def debug_all(self, connection, event):
-        sender = event.source.split('!')[0]
-        reply = f"[{event.type}] {event.source}: {event.arguments}"
-
-        if sender in IGNORED_SENDERS:
-            return
-
-        # Log the conversation with timestamp
-        self.log_conversation(sender, event, reply)
+        self.conn.add_global_handler("action", self.on_action)
 
     def log_conversation(self, sender, message, reply):
         """Function to log conversation to a file specific to the user in the logs folder."""
@@ -71,7 +61,6 @@ class OsuRecommendationBot:
         print("Connected to Bancho IRC")
         if not conn.is_connected():
             error_message = "Failed to connect to IRC server"
-            print(error_message)
             self.log_error(error_message)
 
     def on_privmsg(self, conn, event):
@@ -86,9 +75,6 @@ class OsuRecommendationBot:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         try:
-            # Print the message received from the user with timestamp
-            print(f"[{timestamp}] [PM from {sender}]: {message}")
-            
             reply = ""  # This will store the bot's reply
 
             if message == "!r":
@@ -112,12 +98,26 @@ class OsuRecommendationBot:
         except Exception as e:
             # If an error occurs, log it and print the error
             error_message = f"Error while processing message from {sender}: {str(e)}"
-            print(error_message)
             self.log_error(error_message)
+
+    def on_action(self, conn, event):
+        sender = event.source.split('!')[0]
+
+        if sender in IGNORED_SENDERS:
+            return
+
+        # Extract and log the action message
+        action_message = event.arguments[0] if event.arguments else ""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        log_entry = f"[{timestamp}] [ACTION from {sender}]: {action_message}"
+        self.log_conversation(sender, log_entry, "ACTION handled")
+
+        # Placeholder for future /np functionality
+        self.interface.send(sender, "/np command coming soon!")
 
     def run(self):
         try:
-            print('bot starting')
             start_time = time.time()  # Record the start time
             while True:
                 # Process IRC events
@@ -126,7 +126,6 @@ class OsuRecommendationBot:
                 
         except Exception as e:
             error_message = f"Unexpected error in bot main loop: {str(e)}"
-            print(error_message)
             self.log_error(error_message)
 
 if __name__ == "__main__":
@@ -136,5 +135,4 @@ if __name__ == "__main__":
     except Exception as e:
         # If an error happens during startup or runtime, log it and terminate gracefully
         error_message = f"Bot failed to start or run: {str(e)}"
-        print(error_message)
         bot.log_error(error_message)
