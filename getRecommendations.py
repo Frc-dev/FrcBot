@@ -18,6 +18,8 @@ def get_recommendations(pp_baseline, acc_preference="98"):
     lower_bound = pp_baseline - range_delta
     upper_bound = pp_baseline + range_delta
 
+    print(f"Lower: {lower_bound} Upper: {upper_bound}")
+
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()

@@ -56,30 +56,3 @@ def fetch_top_scores(username):
     except Exception as e:
         print(f"Error fetching scores: {e}")
         return []
-
-# Score-based recommendations from local DB
-def get_recommendations(pp_baseline):
-    percentage = 0.03
-    lower_bound = pp_baseline * (1 - percentage)
-    upper_bound = pp_baseline * (1 + percentage)
-
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-
-        query = """
-        SELECT map_name, beatmap_id, beatmap_set_id, mods, ROUND(acc_95), ROUND(acc_98), ROUND(acc_100)
-        FROM scores
-        WHERE acc_98 BETWEEN ? AND ?
-        ORDER BY acc_98 DESC
-        LIMIT 10;
-        """
-        cursor.execute(query, (lower_bound, upper_bound))
-        results = cursor.fetchall()
-
-        conn.close()
-        return results
-
-    except Exception as e:
-        print(f"Database error: {e}")
-        return []
