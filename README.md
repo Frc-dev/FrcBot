@@ -18,12 +18,14 @@ This is a bot that recommends maps based on your top plays. You can either:
 ## 💡 Features
 
 - `!r` — Recommends you a map based on your top plays.
+- `!r [mod]` — Recommends you a map based on your top plays with the mod of your choice.
 - `!settings [banned_mods] [acc_preference]` — Change your preferences for recommendations.
   - Example: `!settings acc_preference 98`
 - `!settings acc_preference [95, 98, 100]` — Recommends maps where your chosen accuracy will yield positive results. Default is 98.
 - `!settings banned_mods` — Displays currently banned mods.
 - `!settings banned_mods [NM, HD, HR, HDHR, HDDT, HRDT, HDHRDT]` — Toggle mod combinations to exclude from recommendations. You can set them individually or in HD, HDHR, HRDT format to toggle several at once. By default HRDT and HDHRDT are banned.
 - `!settings user [username|userid|0]` — Set a custom user to get recommendations for, 0 will clear the current user and use yours instead.
+- `!settings algo [farm|all]` — Set the bots algorithm, do you want to use the bot for farming? Or you don't mind being recommended non-farm maps? By default you're put into the farm algorithm.
 - `!feedback [message]` - Talk to me directly, report bugs, provide suggestions. Way easier for me to read your message and the feedback is much appreciated.
 - `!help` - Get a list of the commands you can use.
 
@@ -34,8 +36,6 @@ This is a bot that recommends maps based on your top plays. You can either:
 ## 📋 TODO
 
 - [ ] Add /np command with !with options
-- [ ] Create a new recommendation algorithm, this one recommends way too many extremely underweighted maps which leads to terrible farming. Keep current one as alternative algo since people seem to like it.
-- [ ] Add option to !r with a specific mod
 - [ ] Allow setting to set custom pp baseline
 - [ ] Find a way to keep the database updated as new maps are ranked
 
@@ -56,7 +56,9 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Rewrite beatmap lookup so it works with osu direct
 - [x] Handle really old map recommendations returning non-usable download links
 - [x] Handle some beatmaps returning -1 for its beatmapset id
-
+- [x] Create a new recommendation algorithm, this one recommends way too many extremely underweighted maps which leads to terrible farming. Keep current one as alternative algo since people seem to like it.
+- [x] Add option to !r with a specific mod
+      
 ---
 
 ## ⚙️ Requirements to Run Locally
