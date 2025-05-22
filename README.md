@@ -34,6 +34,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 ## 📋 TODO
 
 - [ ] Add /np command with !with options
+- [ ] Create a new recommendation algorithm, this one recommends way too many extremely underweighted maps which leads to terrible farming. Keep current one as alternative algo since people seem to like it.
 - [ ] Add option to !r with a specific mod
 - [ ] Allow setting to set custom pp baseline
 - [ ] Find a way to keep the database updated as new maps are ranked
