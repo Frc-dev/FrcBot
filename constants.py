@@ -30,6 +30,19 @@ VALID_MODS = {
     }
 }
 
+VALID_ALGO = {'farm', 'all'}
+
+NUMERICAL_MODS = {
+    0: 'NM',
+    8: 'HD',
+    16: 'HR',
+    64: 'DT',
+    72: 'HDDT',
+    24: 'HDHR',
+    80: 'HRDT',
+    88: 'HDHRDT',
+}
+
 MOD_COMPONENTS = {'NM', 'HD', 'HR', 'DT'}
 
 def normalize_mod_token(token: str) -> str | None:

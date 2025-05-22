@@ -1,5 +1,5 @@
 import sqlite3, os
-from constants import VALID_MODS, VALID_ACCURACIES
+from constants import VALID_MODS, VALID_ACCURACIES, VALID_ALGO
 from databaseHelper import execute_query
 from ossapi import Ossapi
 from dotenv import load_dotenv
@@ -30,20 +30,21 @@ def create_db():
 
 def get_user_settings(username):
     """Retrieve user settings from the database"""
-    query = "SELECT banned_mods, acc_preference, fake_user FROM user_settings WHERE username = ?"
+    query = "SELECT banned_mods, acc_preference, fake_user, algo FROM user_settings WHERE username = ?"
     result = execute_query(query, (username,))
 
     if result:
         banned_mods = result[0][0].split(',') if result[0][0] else []
         acc_preference = result[0][1]
         fake_user_id = result[0][2]
+        algo = result[0][3]
 
         if fake_user_id is not None:
             user = api.user(int(fake_user_id)).username
         else:
             user = ""
 
-        return banned_mods, acc_preference, user
+        return banned_mods, acc_preference, user, algo
     else:
         query = """
             INSERT INTO user_settings (username) VALUES (?) 
@@ -199,3 +200,33 @@ def update_user_preference(fake_user, username):
     conn.close()
     return True
 
+def update_algo_preference(algo, username):
+    """Update the accuracy preference for a user"""
+    if algo not in VALID_ALGO:
+        return False  # Return False if the algo is invalid
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Check if the user exists in the table
+    cursor.execute("SELECT username FROM user_settings WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    
+    # If the user doesn't exist, create a new record
+    if not result:
+        cursor.execute("""
+        INSERT INTO user_settings (username, algo)
+        VALUES (?, ?)
+        """, (username, algo))
+    
+    # If the user exists, update the algo
+    else:
+        cursor.execute("""
+        UPDATE user_settings 
+        SET algo = ? 
+        WHERE username = ?
+        """, (algo, username))
+    
+    conn.commit()
+    conn.close()
+    return True

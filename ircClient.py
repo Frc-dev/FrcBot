@@ -77,8 +77,8 @@ class OsuRecommendationBot:
         try:
             reply = ""  # This will store the bot's reply
 
-            if message == "!r":
-                reply = handle_recommendation_command(sender)
+            if message.startswith("!r"):
+                reply = handle_recommendation_command(sender, args)
             elif message.startswith("!settings"):
                 reply = handle_settings_command(sender, args)
             elif message.startswith("!feedback"):

@@ -30,8 +30,8 @@ def calculate_performance(map_path=None, existingMap=None, accuracy=100.0, mods=
     }
 
 # --- CONFIG: replace with your osu! app credentials ---
-CLIENT_ID = YOUR_CLIENT_ID  # int
-CLIENT_SECRET = "YOUR_CLIENT_SECRET"  # str
+OSU_CLIENT_ID = os.getenv("OSU_CLIENT_ID")
+OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
 
 # OAuth token URL and API base
 TOKEN_URL = "https://osu.ppy.sh/oauth/token"
@@ -84,7 +84,7 @@ def main():
     mods = 8  # HD
 
     # Get OAuth token
-    token = get_oauth_token(CLIENT_ID, CLIENT_SECRET)
+    token = get_oauth_token(OSU_CLIENT_ID, OSU_CLIENT_SECRET)
     print("Got OAuth token")
 
     # Get beatmap info

@@ -2,20 +2,10 @@ import requests
 import csv
 import json
 from datetime import datetime
+from constants import NUMERICAL_MODS
 
 CSV_URL = "https://raw.githubusercontent.com/grumd/osu-pps/refs/heads/data/data/maps/osu/diffs.csv"
 JSON_OUTPUT = "farm_maps.json"
-
-MODS = {
-    0: 'NM',
-    8: 'HD',
-    16: 'HR',
-    64: 'DT',
-    72: 'HDDT',
-    24: 'HDHR',
-    80: 'HRDT',
-    88: 'HDHRDT',
-}
 
 def fetch_csv():
     response = requests.get(CSV_URL)
@@ -27,7 +17,7 @@ def parse_entries(csv_data):
     entries = []
     for row in reader:
         m = int(row["m"])
-        if m in MODS:
+        if m in NUMERICAL_MODS:
             entries.append({
                 "mods": m,
                 "beatmap_id": int(row["b"]),

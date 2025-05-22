@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def insert_data_on_demand(mapList):
-    
-
-
 def main():
     # Path to the root directory where your osu! maps are stored
     root_dir = os.getenv("SONGS_ROOT_DIR")

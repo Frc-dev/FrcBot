@@ -1,9 +1,19 @@
-import random, os, time
+import random, os, time, json
 from datetime import datetime
-from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference
+from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
 from fetchTopScores import fetch_top_scores
 from getRecommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
+from sessionManager import is_local_client
+
+def normalize_mods(mod_str):
+    if not mod_str:
+        return None
+    mod_str = mod_str.lower()
+    for key, variants in VALID_MODS.items():
+        if mod_str in {v.lower() for v in variants}:
+            return key
+    return None
 
 def get_beatmap_url(beatmap_set_id, beatmap_id):
     """
@@ -18,10 +28,11 @@ def get_beatmap_url(beatmap_set_id, beatmap_id):
 
     return f"https://osu.ppy.sh/beatmapsets/{beatmap_set_id}#osu/{beatmap_id}"
 
-
-def handle_recommendation_command(username):
+def handle_recommendation_command(username, rec_mods=None):
     # Get user settings (banned mods and accuracy preference)
-    banned_mods, acc_pref, fake_user = get_user_settings(username)
+    banned_mods, acc_pref, fake_user, algo = get_user_settings(username)
+
+    rec_mods = normalize_mods(rec_mods)
 
     if fake_user:
         username = fake_user
@@ -37,42 +48,73 @@ def handle_recommendation_command(username):
     pp = float(top_scores[-1].get("pp", 0))
 
     # Get all recommendations based on PP and accuracy preference
-    all_recs = get_recommendations(pp, acc_pref)
+    all_recs = get_recommendations(pp, acc_pref, algo, rec_mods)
     
     # Filter out recommendations based on banned mods
     filtered = [rec for rec in all_recs if rec[3] not in banned_mods]
 
     # Check if there are any valid recommendations
-    if filtered:
-        # Select a random recommendation
-        chosen = random.choice(filtered)
-        map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
-        beatmap_set_id, beatmap_id = chosen[2], chosen[1]
-        url = get_beatmap_url(beatmap_set_id, beatmap_id)
-        
-        if url:
-            reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
-        else:
-            # Fallback if url is None, just print map name without link
-            reply = f"{map_name} | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp | (Download not available)"
-    else:
-        # If no valid recommendations, store the message in the reply variable
+    if not filtered:
         reply = "No maps found in that PP range that match your preferences."
-    
+
+    # Select a random recommendation
+    chosen = random.choice(filtered)
+    map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
+    beatmap_set_id, beatmap_id = chosen[2], chosen[1]
+    url = get_beatmap_url(beatmap_set_id, beatmap_id)
+        
+    if url:
+        reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
+    else:
+        # Fallback if url is None, just print map name without link
+        reply = f"{map_name} | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp | (Download not available)"
+
+    local = is_local_client(username)
+    if local:
+        #sigma tip 1774: travel just to troll
+        range_percentage = 0.03
+        range_delta = pp * range_percentage
+        lower_bound = pp - range_delta
+        upper_bound = pp + range_delta
+
+        title = f"{int(lower_bound)}-{int(upper_bound)} | mods: {rec_mods or 'any'} | acc: {acc_pref}"
+        json_path = f"{username}.json"
+
+        data = {}
+
+        # Load existing data if file exists
+        if os.path.exists(json_path):
+            with open(json_path, "r") as jf:
+                try:
+                    data = json.load(jf)
+                except json.JSONDecodeError:
+                    data = {}
+
+        # If title exists, append new reply if not duplicate
+        if title in data:
+            if reply not in data[title]:
+                data[title].append(reply)
+        else:
+            data[title] = [reply]
+
+        # Save back to JSON
+        with open(json_path, "w") as jf:
+            json.dump(data, jf, indent=4)
+
     return reply
 
 def handle_settings_command(username, args):
-    banned_mods, acc_pref, fake_user = get_user_settings(username)
+    banned_mods, acc_pref, fake_user, algo = get_user_settings(username)
     if not args:
-        msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref}"
+        msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref} | Algorithm: {algo}"
         if fake_user:
             msg += f" | User: {fake_user}"
-        msg += f" | Usage: banned_mods acc_preference user"
+        msg += f" | Usage: mods acc user algo"
         return msg
 
     setting = args[0]
 
-    if setting == "banned_mods":
+    if setting == "mods":
         if len(args) == 1:
             return f"Current banned mods: {', '.join(banned_mods) if banned_mods else 'None'}"
         else:
@@ -108,7 +150,7 @@ def handle_settings_command(username, args):
                 reply += f" | Ignored invalid mods: {', '.join(all_invalid)} | Valid mods: {', '.join(VALID_MODS)}"
             return reply
 
-    elif setting == "acc_preference":
+    elif setting == "acc":
         if len(args) == 2 and args[1] in VALID_ACCURACIES:
             result = update_acc_preference(username, args[1])
             return f"Updated accuracy preference to {args[1]}" if result else "Error updating accuracy preference."
@@ -122,6 +164,14 @@ def handle_settings_command(username, args):
             target = " ".join(args[1:])
             result = update_user_preference(target, username)
             return f"Updated user" if result else "Error fetching user."
+        
+    elif setting == "algo":
+        if len(args) == 1:
+            return f"!settings algo [farm|all] to change the bots algorithm, farm is the default and your classic farming companion, all will also give you very underweighted maps and is not suitable for farming"
+        else:
+            target = " ".join(args[1:])
+            result = update_algo_preference(target, username)
+            return f"Updated algorithm" if result else "Error fetching user."
 
     else:
         return "Unknown !settings command. Options: banned_mods, acc_preference"

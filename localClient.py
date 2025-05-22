@@ -1,5 +1,6 @@
 from talkInterfaces import CLIInterface
 from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command
+from sessionManager import set_local_flag
 
 def main():
     interface = CLIInterface()
@@ -10,9 +11,16 @@ def main():
 
         if command == "q":
             break
-        elif command == "!r":
+        elif command.startswith("!r"):
             # Handle recommendation command and capture the reply
-            reply = handle_recommendation_command(username)
+            set_local_flag(username, True)
+            args = command.split()[1:]
+            if (len(args) == 1):
+                args = args[0]
+            else:
+                args = None
+
+            reply = handle_recommendation_command(username, args)
             interface.send(reply)  # Print the reply
         elif command.startswith("!settings"):
             # Extract arguments and handle settings command
