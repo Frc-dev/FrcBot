@@ -35,9 +35,10 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## TODO
 
+- [ ] Rewrite map processing to switch from rosu-pp local processing to chimu.moe API, skipping the need for local files and downloads entirely
+- [ ] ^ This will also allow to add a new acc_99 setting
 - [ ] Add /np command with !with options
 - [ ] Allow setting to set custom pp baseline
-- [ ] Find a way to keep the database updated as new maps are ranked
 
 ---
 

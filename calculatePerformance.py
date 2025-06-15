@@ -78,6 +78,7 @@ def calculate_pp_from_beatmap_content(osu_content, accuracy=100.0, mods=0):
         return result.pp
 
 def main():
+    print('running this')
     # Example beatmap_id and mods
     beatmap_id = 378205
     accuracy = 98.0
@@ -105,3 +106,5 @@ def main():
     if pp is not None:
         print(f"PP for beatmap {beatmap_id} with mods {mods} at {accuracy}%: {pp:.2f}")
 
+if __name__ == "__main__":
+    main()

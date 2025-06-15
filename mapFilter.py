@@ -57,7 +57,6 @@ def main():
     print("\nDestination keys:")
     dest_key   = pick_key(keys, "Select destination key")
 
-    src_pp_min, src_pp_max, src_mods, src_acc = parse_key(source_key)
     dst_pp_min, dst_pp_max, dst_mods, dst_acc = parse_key(dest_key)
 
     conn = sqlite3.connect(DB_PATH)
