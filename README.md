@@ -15,7 +15,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ---
 
-## 💡 Features
+## Features
 
 - `!r` — Recommends you a map based on your top plays.
 - `!r [mod]` — Recommends you a map based on your top plays with the mod of your choice.
@@ -33,7 +33,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ---
 
-## 📋 TODO
+## TODO
 
 - [ ] Add /np command with !with options
 - [ ] Allow setting to set custom pp baseline
@@ -41,7 +41,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ---
 
-## ✅ Done
+## Done
 
 - [x] Improve this README
 - [x] Post full instructions on how to build and run locally
@@ -58,10 +58,10 @@ This is a bot that recommends maps based on your top plays. You can either:
 - [x] Handle some beatmaps returning -1 for its beatmapset id
 - [x] Create a new recommendation algorithm, this one recommends way too many extremely underweighted maps which leads to terrible farming. Keep current one as alternative algo since people seem to like it.
 - [x] Add option to !r with a specific mod
-      
+- [x] Fix bug that did not allow the irc bot to recommend with specific mod
 ---
 
-## ⚙️ Requirements to Run Locally
+## Requirements to Run Locally
 
 - Python 3.8+ and `sqlite3`
 - A SQLite database
@@ -77,7 +77,7 @@ Install the dependencies with:
 ```bash
 pip install rosu-pp-py ossapi requests python-dotenv irc
 ```
-### 🛠️ Setup Instructions
+### Setup Instructions
 
 Once the source code is downloaded, you'll need to configure a few things before running the bot.
 
@@ -130,7 +130,7 @@ If anything is unclear or you're stuck, feel free to reach out!
 
 ---
 
-## 🧠 Credits
+## Credits
 
 - [rosu-pp-py](https://github.com/4nykey/rosu-pp-py) — For performance point calculation
 - [ossapi](https://github.com/ppy/ossapi) — osu! v2 API wrapper
