@@ -2,7 +2,7 @@ import os
 import re
 from collections import defaultdict
 
-log_dir = "logs\msg"
+log_dir = "logs/msg"
 output_file = "user_metrics.txt"
 
 log_line_re = re.compile(r"\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] User: ([^\s]+) - Message:")
