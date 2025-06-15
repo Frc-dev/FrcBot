@@ -6,7 +6,6 @@ log_dir = "logs/msg"
 output_file = "user_metrics.txt"
 
 log_line_re = re.compile(r"\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] User: ([^\s]+) - Message:")
-quit_pattern = re.compile(r"type:\s*quit", re.IGNORECASE)
 
 users_per_month = defaultdict(set)
 deleted_files = []
@@ -19,15 +18,6 @@ for filename in os.listdir(log_dir):
 
     filepath = os.path.join(log_dir, filename)
 
-    # Check for "type: quit" pattern — delete if found
-    with open(filepath, "r", encoding="utf-8") as f:
-        if any(quit_pattern.search(line) for line in f):
-            os.remove(filepath)
-            deleted_files.append(filename)
-            print(f"Deleted spam log: {filename}")
-            continue  # Skip processing this file
-
-    # Otherwise, parse for user metrics
     print(f"Processing file: {filename}")
     months_in_file = set()
 
@@ -53,4 +43,3 @@ with open(output_file, "w", encoding="utf-8") as out_f:
         out_f.write(line + "\n")
 
 print(f"\nUser metrics saved to: {output_file}")
-print(f"Total files deleted: {len(deleted_files)}")
