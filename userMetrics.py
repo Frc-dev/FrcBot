@@ -50,4 +50,10 @@ for filename in os.listdir(log_dir):
 # Step 3: Save metrics
 print("\nSummary of unique users per month:")
 with open(output_file, "w", encoding="utf-8") as out_f:
-    for month, users in sorted(use
+    for month, users in sorted(users_per_month.items()):
+        line = f"{month}: {len(users)} unique users"
+        print(line)
+        out_f.write(line + "\n")
+
+print(f"\n✅ User metrics saved to {output_file}")
+print(f"🗑️  Total files deleted: {len(deleted_files)}")
