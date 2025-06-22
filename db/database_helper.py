@@ -1,4 +1,5 @@
 import sqlite3
+import random
 
 def get_maps_in_pp_range(pp_min, pp_max, db_path="osu_scores.db"):
     conn = sqlite3.connect(db_path)
@@ -48,39 +49,72 @@ def get_existing_unique_score_ids(conn):
     existing_ids = {row[0] for row in cursor.fetchall()}  # Use a set for fast lookups
     return existing_ids
 
-def store_records_in_batch(records):
-    """Store multiple performance records in the database in a batch."""
+def store_records_in_batch(records, update_existing=False):
+    """Store multiple performance records in the database in a batch.
+    
+    Args:
+        records (list): List of dicts containing performance data.
+        update_existing (bool): If True, update existing records on conflict.
+    """
     # Open a connection to the database
     conn = connect_to_db()
 
     # Create the table if it doesn't exist
     create_table_if_not_exists(conn)
 
-    # Get existing unique_score_ids in the database
-    existing_ids = get_existing_unique_score_ids(conn)
-    
-    # Prepare the SQL statement for batch insertion
-    sql = '''
-        INSERT OR IGNORE INTO scores (
-            map_name,
-            beatmap_set_id,
-            beatmap_id,
-            mods,
-            unique_score_id,
-            acc_95,
-            acc_98,
-            acc_100,
-            updated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    '''
-    
-    # Filter out records that already exist
-    filtered_records = [
-        record for record in records if record['unique_score_id'] not in existing_ids
-    ]
-    
-    if filtered_records:
+    if update_existing:
+        # UPSERT: insert or update if conflict on unique_score_id
+        sql = '''
+            INSERT INTO scores (
+                map_name,
+                beatmap_set_id,
+                beatmap_id,
+                mods,
+                unique_score_id,
+                acc_95,
+                acc_98,
+                acc_99,
+                acc_100,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(unique_score_id) DO UPDATE SET
+                map_name=excluded.map_name,
+                beatmap_set_id=excluded.beatmap_set_id,
+                beatmap_id=excluded.beatmap_id,
+                mods=excluded.mods,
+                acc_95=excluded.acc_95,
+                acc_98=excluded.acc_98,
+                acc_99=excluded.acc_99,
+                acc_100=excluded.acc_100,
+                updated_at=excluded.updated_at
+        '''
+    else:
+        # Insert or ignore duplicates
+        sql = '''
+            INSERT OR IGNORE INTO scores (
+                map_name,
+                beatmap_set_id,
+                beatmap_id,
+                mods,
+                unique_score_id,
+                acc_95,
+                acc_98,
+                acc_99,
+                acc_100,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+
+    # If not updating existing records, filter out duplicates ahead of time
+    if not update_existing:
+        existing_ids = get_existing_unique_score_ids(conn)
+        records = [
+            record for record in records if record['unique_score_id'] not in existing_ids
+        ]
+
+    if records:
         with conn:
             conn.executemany(sql, [
                 (
@@ -91,18 +125,18 @@ def store_records_in_batch(records):
                     record['unique_score_id'],
                     record['acc_95'],
                     record['acc_98'],
+                    record['acc_99'],
                     record['acc_100'],
                     record['updated_at']
-                ) for record in filtered_records
+                ) for record in records
             ])
-        print(f"Inserted {len(filtered_records)} records.")
+        action = "Upserted" if update_existing else "Inserted"
+        print(f"{action} {len(records)} records.")
     else:
-        print("No new records to insert.")
-    
+        print("No new records to insert." if not update_existing else "No records provided.")
+
     # Close the connection
     conn.close()
-
-import sqlite3
 
 def get_user_settings(username):
     conn = sqlite3.connect("osu_scores.db")
@@ -149,9 +183,6 @@ def update_user_settings(username, banned_mods=None, acc_preference=None):
     conn.commit()
     conn.close()
 
-import sqlite3
-import random
-
 def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
     conn = sqlite3.connect("osu_scores.db")
     cursor = conn.cursor()
@@ -162,7 +193,7 @@ def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
     banned_mods = set(banned_mods)
 
     query = f"""
-        SELECT map_name, beatmap_id, beatmap_set_id, mods, acc_95, acc_98, acc_100
+        SELECT map_name, beatmap_id, beatmap_set_id, mods, acc_95, acc_98, acc_99, acc_100
         FROM scores
         WHERE {acc_preference} BETWEEN ? AND ?
     """
@@ -189,7 +220,8 @@ def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
         "mods": chosen[3],
         "acc_95": chosen[4],
         "acc_98": chosen[5],
-        "acc_100": chosen[6]
+        "acc_99": chosen[6],
+        "acc_100": chosen[7]
     }
 
 def execute_query(query, params=()):

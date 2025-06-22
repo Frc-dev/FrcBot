@@ -2,9 +2,9 @@ import json
 import sqlite3
 from constants import NUMERICAL_MODS  # Make sure constants.py is in the same directory
 
-FARM_JSON = "farm_maps.json"
-DB_PATH = "osu_scores.db"
-UNMATCHED_JSON = "unmatched_maps.json"  # File to save unmatched maps
+FARM_JSON = "map/farm_maps.json"
+DB_PATH = "data/osu_scores.db"
+UNMATCHED_JSON = "map/unmatched_maps.json"  # File to save unmatched maps
 
 def load_farm_maps():
     with open(FARM_JSON, "r") as f:

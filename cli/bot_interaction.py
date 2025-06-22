@@ -1,10 +1,10 @@
 import random, os, time, json
 from datetime import datetime
-from settingsHelper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
-from fetchTopScores import fetch_top_scores
+from FrcBot.db.settings_helper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
+from FrcBot.api.fetch_top_scores import fetch_top_scores
 from getRecommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
-from sessionManager import is_local_client
+from FrcBot.session_manager import is_local_client
 
 def normalize_mods(mod_str):
     if not mod_str:

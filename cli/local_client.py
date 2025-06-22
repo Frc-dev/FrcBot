@@ -1,6 +1,6 @@
-from talkInterfaces import CLIInterface
-from botInteraction import handle_recommendation_command, handle_settings_command, handle_feedback_command
-from sessionManager import set_local_flag
+from FrcBot.cli.talk_interfaces import CLIInterface
+from FrcBot.cli.bot_interaction import handle_recommendation_command, handle_settings_command, handle_feedback_command
+from FrcBot.session_manager import set_local_flag
 
 def main():
     interface = CLIInterface()

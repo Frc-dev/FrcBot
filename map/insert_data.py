@@ -1,20 +1,19 @@
 import os
 import datetime
-from getMapInfo import OsuParser
-from calculatePerformance import calculate_performance
-from databaseHelper import store_records_in_batch
+from FrcBot.map.get_map_info import OsuParser
+from FrcBot.map.calculate_performance import calculate_performance
+from FrcBot.db.database_helper import store_records_in_batch
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def main():
-    # Path to the root directory where your osu! maps are stored
+def load_data():
+# Path to the root directory where your osu! maps are stored
     root_dir = os.getenv("SONGS_ROOT_DIR")
     
     # Initialize the OsuParser with the root directory
     osu_parser = OsuParser(root_dir)
     
-    # Get metadata for the first 10 osu! files
     maps_metadata = osu_parser.get_first_n_osu_files()
 
     mods = {
@@ -30,7 +29,7 @@ def main():
         [8, 16, 64]
     ]
 
-    accuracyCombinations = [95, 98, 100]
+    accuracyCombinations = [95, 98, 99, 100]
 
     processed = 0
     batch = 100
@@ -80,6 +79,7 @@ def main():
                 "unique_score_id": unique_score_id,
                 "acc_95": acc_pp_map.get(95),
                 "acc_98": acc_pp_map.get(98),
+                "acc_99": acc_pp_map.get(99),
                 "acc_100": acc_pp_map.get(100),
                 "updated_at": datetime.datetime.now().isoformat()
             }
@@ -96,6 +96,9 @@ def main():
     # Ensure remaining records are stored if any (after the loop ends)
     if map_results:
         store_records_in_batch(map_results)
+
+def main():
+    loadData()
 
 if __name__ == "__main__":
     main()
