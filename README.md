@@ -35,7 +35,7 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## TODO
 
-- [ ] Automate map processing to automatically update the database
+- [ ] Automate map processing
 - [ ] Add a new acc_99 setting
 - [ ] Add /np command with !with options
 - [ ] Allow setting to set custom pp baseline
