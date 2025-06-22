@@ -1,3 +1,5 @@
+import os
+
 VALID_ACCURACIES = {'95', '98', '100'}
 VALID_MODS = {
     'NM': {'NM', 'nm'},
@@ -54,3 +56,6 @@ def normalize_mod_token(token: str) -> str | None:
         if cleaned in variations:
             return canonical
     return None
+
+
+DB_PATH = os.path.join("data", "osu_scores.db")

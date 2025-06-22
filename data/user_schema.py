@@ -1,7 +1,8 @@
 import sqlite3
+from constants import DB_PATH
 
 def create_user_settings_table():
-    conn = sqlite3.connect("osu_scores.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""

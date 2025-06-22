@@ -1,5 +1,5 @@
 import sqlite3, os
-from constants import VALID_MODS, VALID_ACCURACIES, VALID_ALGO
+from constants import VALID_MODS, VALID_ACCURACIES, VALID_ALGO, DB_PATH
 from FrcBot.db.database_helper import execute_query
 from ossapi import Ossapi
 from dotenv import load_dotenv
@@ -8,7 +8,6 @@ load_dotenv()
 
 OSU_CLIENT_ID = os.getenv("OSU_CLIENT_ID")
 OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
-DB_PATH = "osu_scores.db"
 api = Ossapi(OSU_CLIENT_ID, OSU_CLIENT_SECRET)
 
 def create_db():

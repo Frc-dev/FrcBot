@@ -1,6 +1,5 @@
 import sqlite3
-
-DB_PATH = "osu_scores.db"
+from constants import DB_PATH
 
 def get_recommendations(pp_baseline, acc_preference="98", algo="farm", rec_mods=None):
     acc_column_map = {

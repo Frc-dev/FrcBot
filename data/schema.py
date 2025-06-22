@@ -1,11 +1,11 @@
 import sqlite3
 import os
+from constants import DB_PATH
 
 # Get the directory where this script is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Join with the DB filename
-DB_PATH = os.path.join(BASE_DIR, 'osu_scores.db')
 conn = sqlite3.connect(DB_PATH)
 
 # 2. Create a cursor object to execute SQL commands

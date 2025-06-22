@@ -11,7 +11,6 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 
 OSU_CLIENT_ID = os.getenv("OSU_CLIENT_ID")
 OSU_CLIENT_SECRET = os.getenv("OSU_CLIENT_SECRET")
-DB_PATH = "osu_scores.db"
 
 # Get top scores using v2 API
 def fetch_top_scores(username):

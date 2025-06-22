@@ -1,6 +1,5 @@
 import sqlite3
-
-DB_PATH = "osu_scores.db"
+from constants import DB_PATH
 
 def migrate_user_settings():
     conn = sqlite3.connect(DB_PATH)

@@ -1,8 +1,7 @@
 import json
 import sqlite3
 import re
-
-DB_PATH = "osu_scores.db"
+from constants import DB_PATH
 
 def load_user_file(username):
     filename = f"{username}.json"

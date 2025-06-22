@@ -1,7 +1,8 @@
 import sqlite3
 import random
+from constants import DB_PATH
 
-def get_maps_in_pp_range(pp_min, pp_max, db_path="osu_scores.db"):
+def get_maps_in_pp_range(pp_min, pp_max, db_path=DB_PATH):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -20,7 +21,7 @@ def get_maps_in_pp_range(pp_min, pp_max, db_path="osu_scores.db"):
     return results
 
 
-def connect_to_db(db_name="osu_scores.db"):
+def connect_to_db(db_name=DB_PATH):
     """Create a connection to the SQLite database and return the connection object."""
     return sqlite3.connect(db_name)
 
@@ -139,7 +140,7 @@ def store_records_in_batch(records, update_existing=False):
     conn.close()
 
 def get_user_settings(username):
-    conn = sqlite3.connect("osu_scores.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("SELECT banned_mods, acc_preference FROM user_settings WHERE username = ?", (username,))
@@ -158,7 +159,7 @@ def get_user_settings(username):
         }
 
 def update_user_settings(username, banned_mods=None, acc_preference=None):
-    conn = sqlite3.connect("osu_scores.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     # Fetch existing settings
@@ -184,7 +185,7 @@ def update_user_settings(username, banned_mods=None, acc_preference=None):
     conn.close()
 
 def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
-    conn = sqlite3.connect("osu_scores.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     lower_bound = baseline_pp - 10
@@ -226,7 +227,7 @@ def get_recommendation(baseline_pp, acc_preference='acc_98', banned_mods=[]):
 
 def execute_query(query, params=()):
     # Open a database connection
-    conn = sqlite3.connect('osu_scores.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     try:
