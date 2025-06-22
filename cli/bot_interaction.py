@@ -174,7 +174,7 @@ def handle_settings_command(username, args):
             return f"Updated algorithm" if result else "Error fetching user."
 
     else:
-        return "Unknown !settings command. Options: mods, acc"
+        return "Unknown !settings command. Options: mods, acc, user, algo"
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), "logs", "feedback")
 LOG_FILE = os.path.join(LOG_DIR, "feedback.txt")
