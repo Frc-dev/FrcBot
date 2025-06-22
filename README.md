@@ -35,7 +35,6 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ## TODO
 
-- [ ] Rewrite the farm algorithm, as the maps it gives are still not farmy enough (requests with 1-2 fcs on the entire map at most)
 - [ ] Automate map processing to automatically update the database
 - [ ] Add a new acc_99 setting
 - [ ] Add /np command with !with options
