@@ -1,8 +1,8 @@
 import os
 import datetime
-from FrcBot.map.get_map_info import OsuParser
-from FrcBot.map.calculate_performance import calculate_performance
-from FrcBot.db.database_helper import store_records_in_batch
+from map.get_map_info import OsuParser
+from map.calculate_performance import calculate_performance
+from db.database_helper import store_records_in_batch
 from dotenv import load_dotenv
 
 load_dotenv()

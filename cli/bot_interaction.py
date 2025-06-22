@@ -1,10 +1,10 @@
 import random, os, time, json
 from datetime import datetime
-from FrcBot.db.settings_helper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
-from FrcBot.api.fetch_top_scores import fetch_top_scores
-from getRecommendations import get_recommendations
+from db.settings_helper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
+from api.fetch_top_scores import fetch_top_scores
+from db.get_recommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
-from FrcBot.session_manager import is_local_client
+from session_manager import is_local_client
 
 def normalize_mods(mod_str):
     if not mod_str:
@@ -41,8 +41,7 @@ def handle_recommendation_command(username, rec_mods=None):
     top_scores = fetch_top_scores(username)
     if not top_scores or len(top_scores) < 10:
         # If not enough data, return the message instead of sending it
-        reply = "Not enough data to generate recommendations."
-        return reply
+        return "Not enough data to generate recommendations."
 
     # Extract the PP (Performance Points) of the last score
     pp = float(top_scores[-1].get("pp", 0))
@@ -53,9 +52,10 @@ def handle_recommendation_command(username, rec_mods=None):
     # Filter out recommendations based on banned mods
     filtered = [rec for rec in all_recs if rec[3] not in banned_mods]
 
+    print(filtered)
     # Check if there are any valid recommendations
     if not filtered:
-        reply = "No maps found in that PP range that match your preferences."
+        return "No maps found in your PP range that match your preferences. Check your settings"
 
     # Select a random recommendation
     chosen = random.choice(filtered)

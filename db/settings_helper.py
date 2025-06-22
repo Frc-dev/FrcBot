@@ -1,6 +1,6 @@
 import sqlite3, os
 from constants import VALID_MODS, VALID_ACCURACIES, VALID_ALGO, DB_PATH
-from FrcBot.db.database_helper import execute_query
+from db.database_helper import execute_query
 from ossapi import Ossapi
 from dotenv import load_dotenv
 
