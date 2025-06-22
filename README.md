@@ -43,26 +43,6 @@ This is a bot that recommends maps based on your top plays. You can either:
 
 ---
 
-## Done
-
-- [x] Improve this README
-- [x] Post full instructions on how to build and run locally
-- [x] Fix settings not being saved
-- [x] Normalize mod formatting (e.g., `HD+HR` → `HDHR`)
-- [x] Allow banning multiple mods at once (no need to send the command repeatedly)
-- [x] Host the bot on a server so it's available 24/7
-- [x] Fix users not receiving correct format list of mods after setting them wrong
-- [x] Add command to provide feedback to me directly
-- [x] Allow setting to set specific user you want the recommendations to pull from
-- [x] Allow alliterations of mods to be used (DTHD for HDDT, HDDTHR for HDHRDT)
-- [x] Rewrite beatmap lookup so it works with osu direct
-- [x] Handle really old map recommendations returning non-usable download links
-- [x] Handle some beatmaps returning -1 for its beatmapset id
-- [x] Create a new recommendation algorithm, this one recommends way too many extremely underweighted maps which leads to terrible farming. Keep current one as alternative algo since people seem to like it.
-- [x] Add option to !r with a specific mod
-- [x] Fix bug that did not allow the irc bot to recommend with specific mod
----
-
 ## Requirements to Run Locally
 
 - Python 3.8+ and `sqlite3`
