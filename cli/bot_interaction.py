@@ -1,6 +1,6 @@
 import random, os, time, json
 from datetime import datetime
-from db.settings_helper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference
+from db.settings_helper import update_banned_mods, update_acc_preference, get_user_settings, get_banned_mods, update_user_preference, update_algo_preference, update_pp_preference
 from api.fetch_top_scores import fetch_top_scores
 from db.get_recommendations import get_recommendations
 from constants import VALID_MODS, VALID_ACCURACIES  # Import constants
@@ -28,9 +28,66 @@ def get_beatmap_url(beatmap_set_id, beatmap_id):
 
     return f"https://osu.ppy.sh/beatmapsets/{beatmap_set_id}#osu/{beatmap_id}"
 
+def get_unique_local_recommendation(username, pp, acc_pref, rec_mods, filtered):
+    import os
+    import json
+
+    range_percentage = 0.03
+    range_delta = pp * range_percentage
+    lower_bound = pp - range_delta
+    upper_bound = pp + range_delta
+
+    title = f"{int(lower_bound)}-{int(upper_bound)} | mods: {rec_mods or 'any'} | acc: {acc_pref}"
+    json_path = f"{username}.json"
+
+    shown_replies = set()
+    if os.path.exists(json_path):
+        with open(json_path, "r") as jf:
+            try:
+                data = json.load(jf)
+                shown_replies = set(data.get(title, []))
+            except json.JSONDecodeError:
+                data = {}
+    else:
+        data = {}
+
+    all_replies = []
+
+    for rec in filtered:
+        map_name, mods = rec[0], rec[3]
+        acc_95_pp, acc_98_pp, acc_100_pp = int(rec[4]), int(rec[5]), int(rec[6])
+        beatmap_set_id, beatmap_id = rec[2], rec[1]
+
+        url = get_beatmap_url(beatmap_set_id, beatmap_id)
+
+        core_reply = (
+            f"[{url} {map_name}]" if url else f"{map_name}"
+        )
+        core_reply += f" | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
+
+        all_replies.append(core_reply)
+
+    # Now filter them
+    filtered_replies = [r for r in all_replies if r not in shown_replies]
+
+    if not filtered_replies:
+        return "All recommendations in your range and filters have already been shown. Try changing your settings or wait for new maps."
+
+    final_reply = random.choice(filtered_replies)
+    display_reply = f"{final_reply} | Collection: {title} | Remaining: {len(filtered_replies) - 1}"
+
+    data.setdefault(title, []).append(final_reply)
+
+    with open(json_path, "w") as jf:
+        json.dump(data, jf, indent=4)
+
+    return display_reply
+
+
+
 def handle_recommendation_command(username, rec_mods=None):
     # Get user settings (banned mods and accuracy preference)
-    banned_mods, acc_pref, fake_user, algo = get_user_settings(username)
+    banned_mods, acc_pref, fake_user, algo, pp_pref = get_user_settings(username)
 
     rec_mods = normalize_mods(rec_mods)
 
@@ -40,73 +97,50 @@ def handle_recommendation_command(username, rec_mods=None):
     # Get top scores for the user
     top_scores = fetch_top_scores(username)
     if not top_scores or len(top_scores) < 10:
-        # If not enough data, return the message instead of sending it
         return "Not enough data to generate recommendations."
 
     # Extract the PP (Performance Points) of the last score
     pp = float(top_scores[-1].get("pp", 0))
 
+    if pp_pref:
+        try:
+            pp = float(pp_pref)
+        except ValueError:
+            return "Invalid PP preference set in your settings."
+
     # Get all recommendations based on PP and accuracy preference
     all_recs = get_recommendations(pp, acc_pref, algo, rec_mods)
-    
+
     # Filter out recommendations based on banned mods
     filtered = [rec for rec in all_recs if rec[3] not in banned_mods]
 
-    print(filtered)
     # Check if there are any valid recommendations
     if not filtered:
-        return "No maps found in your PP range that match your preferences. Check your settings"
+        return "No maps found in your PP range that match your preferences. Check your settings."
 
-    # Select a random recommendation
-    chosen = random.choice(filtered)
-    map_name, mods, acc_95_pp, acc_98_pp, acc_100_pp = chosen[0], chosen[3], int(chosen[4]), int(chosen[5]), int(chosen[6])
-    beatmap_set_id, beatmap_id = chosen[2], chosen[1]
+    local = is_local_client(username)
+
+    if local:
+        return get_unique_local_recommendation(username, pp, acc_pref, rec_mods, filtered)
+
+    # Standard IRC path — pick random recommendation, no deduplication
+    rec = random.choice(filtered)
+    map_name, mods = rec[0], rec[3]
+    acc_95_pp, acc_98_pp, acc_100_pp = int(rec[4]), int(rec[5]), int(rec[6])
+    beatmap_set_id, beatmap_id = rec[2], rec[1]
     url = get_beatmap_url(beatmap_set_id, beatmap_id)
-        
+
     if url:
         reply = f"[{url} {map_name}] | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp"
     else:
-        # Fallback if url is None, just print map name without link
         reply = f"{map_name} | {mods} | 95%: {acc_95_pp}pp, 98%: {acc_98_pp}pp, 100%: {acc_100_pp}pp | (Download not available)"
-
-    local = is_local_client(username)
-    if local:
-        #sigma tip 1774: travel just to troll
-        range_percentage = 0.03
-        range_delta = pp * range_percentage
-        lower_bound = pp - range_delta
-        upper_bound = pp + range_delta
-
-        title = f"{int(lower_bound)}-{int(upper_bound)} | mods: {rec_mods or 'any'} | acc: {acc_pref}"
-        json_path = f"{username}.json"
-
-        data = {}
-
-        # Load existing data if file exists
-        if os.path.exists(json_path):
-            with open(json_path, "r") as jf:
-                try:
-                    data = json.load(jf)
-                except json.JSONDecodeError:
-                    data = {}
-
-        # If title exists, append new reply if not duplicate
-        if title in data:
-            if reply not in data[title]:
-                data[title].append(reply)
-        else:
-            data[title] = [reply]
-
-        # Save back to JSON
-        with open(json_path, "w") as jf:
-            json.dump(data, jf, indent=4)
 
     return reply
 
 def handle_settings_command(username, args):
-    banned_mods, acc_pref, fake_user, algo = get_user_settings(username)
+    banned_mods, acc_pref, fake_user, algo, pp_pref = get_user_settings(username)
     if not args:
-        msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref} | Algorithm: {algo}"
+        msg = f"Your settings: Banned Mods: {', '.join(banned_mods) if banned_mods else 'None'} | Accuracy Preference: {acc_pref} | Algorithm: {algo} | PP Preference: {'No' if not pp_pref or int(pp_pref) == 0 else pp_pref}"
         if fake_user:
             msg += f" | User: {fake_user}"
         msg += f" | Usage: mods acc user algo"
@@ -172,9 +206,22 @@ def handle_settings_command(username, args):
             target = " ".join(args[1:])
             result = update_algo_preference(target, username)
             return f"Updated algorithm" if result else "Error fetching user."
+        
+    elif setting == "pp":
+        if len(args) == 1:
+            return f"Use !settings pp [value] to change the PP preference when getting recommendations. Set to 0 to disable."
+        else:
+            try:
+                new_pp_pref = int(args[1])
+                if new_pp_pref < 0:
+                    return "PP preference must be a non-negative integer."
+                update_pp_preference(new_pp_pref, username)
+                return f"Updated PP preference to {new_pp_pref}."
+            except ValueError:
+                return "Invalid PP preference value. Please provide a valid integer."
 
     else:
-        return "Unknown !settings command. Options: mods, acc, user, algo"
+        return "Unknown !settings command. Options: mods, acc, user, algo, pp"
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), "logs", "feedback")
 LOG_FILE = os.path.join(LOG_DIR, "feedback.txt")

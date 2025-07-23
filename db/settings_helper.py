@@ -20,7 +20,9 @@ def create_db():
         username TEXT PRIMARY KEY,
         banned_mods TEXT DEFAULT "HRDT,HDHRDT",
         acc_preference TEXT DEFAULT "98",
-        fake_user INTEGER
+        fake_user INTEGER,
+        algo TEXT DEFAULT "farm",
+        pp_preference INTEGER DEFAULT 0
     )
     """)
     
@@ -29,7 +31,7 @@ def create_db():
 
 def get_user_settings(username):
     """Retrieve user settings from the database"""
-    query = "SELECT banned_mods, acc_preference, fake_user, algo FROM user_settings WHERE username = ?"
+    query = "SELECT banned_mods, acc_preference, fake_user, algo, pp_preference FROM user_settings WHERE username = ?"
     result = execute_query(query, (username,))
 
     if result:
@@ -37,13 +39,14 @@ def get_user_settings(username):
         acc_preference = result[0][1]
         fake_user_id = result[0][2]
         algo = result[0][3]
+        pp_pref = result[0][4]
 
         if fake_user_id is not None:
             user = api.user(int(fake_user_id)).username
         else:
             user = ""
 
-        return banned_mods, acc_preference, user, algo
+        return banned_mods, acc_preference, user, algo, pp_pref
     else:
         query = """
             INSERT INTO user_settings (username) VALUES (?) 
@@ -226,6 +229,37 @@ def update_algo_preference(algo, username):
         WHERE username = ?
         """, (algo, username))
     
+    conn.commit()
+    conn.close()
+    return True
+
+def update_pp_preference(pp, username):
+    """Update the pp preference for a user"""
+    if not isinstance(pp, int) or pp < 0:
+        return False  # Return False if the pp is invalid
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Check if the user exists in the table
+    cursor.execute("SELECT username FROM user_settings WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    
+    # If the user doesn't exist, create a new record
+    if not result:
+        cursor.execute("""
+        INSERT INTO user_settings (username, pp_preference)
+        VALUES (?, ?)
+        """, (username, pp))
+
+    # If the user exists, update the pp_preference
+    else:
+        cursor.execute("""
+        UPDATE user_settings 
+        SET pp_preference = ? 
+        WHERE username = ?
+        """, (pp, username))
+
     conn.commit()
     conn.close()
     return True
