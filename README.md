@@ -1,6 +1,6 @@
 # osu! lazer Recommendation Bot
 
-This is a bot that recommends maps based on your top plays. You can either:
+This is a bot that recommends maps based on your top plays. You can:
 
 - **Run it locally** by downloading the source code and running:
 
@@ -9,10 +9,6 @@ This is a bot that recommends maps based on your top plays. You can either:
     ```
 
     Make sure you have all the [requirements to run locally](https://github.com/Frc-dev/FrcBot/tree/master?tab=readme-ov-file#%EF%B8%8F-requirements-to-run-locally) set up before starting the bot.
-
-- **Use it in-game** by sending a DM to [**Frc**](https://osu.ppy.sh/users/4638940) in osu!  
-  > _Note: If you don't receive a response, DM the bot to let me know and I will read it, the bot should be hosted in a server and working 24/7._
-
 ---
 
 ## Features
