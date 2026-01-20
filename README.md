@@ -22,7 +22,6 @@ This is a bot that recommends maps based on your top plays. You can:
 - `!settings mods [NM, HD, HR, HDHR, HDDT, HRDT, HDHRDT]` — Toggle mod combinations to exclude from recommendations. You can set them individually or in HD, HDHR, HRDT format to toggle several at once. By default HRDT and HDHRDT are banned.
 - `!settings user [username|userid|0]` — Set a custom user to get recommendations for, 0 will clear the current user and use yours instead.
 - `!settings algo [farm|all]` — Set the bots algorithm, do you want to use the bot for farming? Or you don't mind being recommended non-farm maps? By default you're put into the farm algorithm.
-- `!feedback [message]` - Talk to me directly, report bugs, provide suggestions. Way easier for me to read your message and the feedback is much appreciated.
 - `!help` - Get a list of the commands you can use.
 
 > _The bot uses the **osu! v2 API**, so it includes your lazer plays and returns lazer pp values._
